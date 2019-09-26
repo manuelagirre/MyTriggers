@@ -1,0 +1,47 @@
+<template>
+    <div class="slds-grid slds-wrap">
+        <div class="slds-col slds-size_1-of-2">
+            <lightning-combobox
+                name="progress"
+                label="When?"
+                placeholder="Select When"
+                options={optionsBA}
+                value={valueBA}
+                onchange={handleDMLTimingChange}></lightning-combobox>
+                
+        </div>
+        <div class="slds-col slds-size_1-of-2">
+            <lightning-combobox
+                name="progress"
+                label="DML"
+                placeholder="Select DML"
+                options={optionsCRUD}
+                value={valueCRUD}
+                onchange={handleDMLTypeChange}></lightning-combobox>
+                
+        </div>
+        <div class="slds-col slds-size_1-of-2">
+            <lightning-dual-listbox name="Sobjects"
+                                label="Select Sobjects"
+                                source-label="Available"
+                                selected-label="Selected"
+                                field-level-help="Select Sobject to be filtered on the view"
+                                options={optionsSobjects}
+                                value={valueSobjects}
+                                onchange={handleSobjectChange}>
+            </lightning-dual-listbox>
+        </div>
+        <div class="slds-col slds-size_1-of-2">
+            <lightning-dual-listbox name="Classes"
+                                label="Select Apex Classes"
+                                source-label="Available"
+                                selected-label="Selected"
+                                field-level-help="Select Sobject to be filtered on the view"
+                                options={optionsClasses}
+                                value={valueClasses}
+                                onchange={handleClassChange}>
+            </lightning-dual-listbox>
+        </div>
+    </div>
+    
+</template>

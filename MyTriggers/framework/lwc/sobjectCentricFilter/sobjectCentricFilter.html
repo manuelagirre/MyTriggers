@@ -1,0 +1,38 @@
+<template>
+    <div class="slds-grid slds-wrap">
+        <div class="slds-col slds-size_2-of-2">
+            <lightning-combobox
+                name="Sobjectchoosen"
+                label="Sobject"
+                placeholder="Select Sobject"
+                options={optionsSobjects}
+                onchange={handleSobjectChange}></lightning-combobox>
+        </div>
+        <div class="slds-col slds-size_1-of-2">
+            <lightning-dual-listbox name="Sobjects"
+                                label="Select Apex Classes"
+                                source-label="Available"
+                                selected-label="Selected"
+                                field-level-help="Select Apex Class to be filtered on the view"
+                                options={optionsClasses}
+                                value={classValue}
+                                onchange={handleClassChange}>
+            </lightning-dual-listbox>
+        </div>
+        
+        <div class="slds-col slds-size_1-of-4">
+            <lightning-checkbox-group name=""
+                                label="When?"
+                                options={optionsBA}
+                                value={valueBA}
+                                onchange={handleDMLTimingChange}></lightning-checkbox-group>
+        </div>
+        <div class="slds-col slds-size_1-of-4">
+            <lightning-checkbox-group name="Checkbox Group"
+                                label="DML type"
+                                options={optionsCRUD}
+                                value={valueCRUD}
+                                onchange={handleDMLTypeChange}></lightning-checkbox-group>
+        </div>
+    </div>
+</template>

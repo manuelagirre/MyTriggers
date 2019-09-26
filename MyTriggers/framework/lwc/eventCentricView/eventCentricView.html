@@ -1,0 +1,19 @@
+<template>
+    
+    <lightning-layout multiple-rows="true">
+        <lightning-layout-item size="12">
+            <div class="slds-p-around_small">
+                <c-event-centric-filter 
+                    onfilterchange={handleFilterChange}
+                    filter-options={filterOptions}>
+                </c-event-centric-filter>
+            </div>
+        </lightning-layout-item>
+        <lightning-layout-item size="12">
+            <div class="slds-p-around_small">
+                <c-table-component></c-table-component>
+            </div>
+        </lightning-layout-item>
+    </lightning-layout>
+    
+</template>

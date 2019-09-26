@@ -124,12 +124,12 @@ private class MyTriggersTest {
 	}
 
 	private static MyTriggerSetting__mdt getTriggerHandlingSetting(String objTypeName, System.TriggerOperation event, String className){
-		JSONObject jsonObj = new JSONObject(new MyTriggerSetting__mdt());
-		jsonObj.set('DeveloperName','TestHandler'+event.name());
-		jsonObj.set('Event__c', event.name(), true);
-		jsonObj.set('sObject__c', objTypeName, true);
-		jsonObj.set('Class__c', className, true);
-        MyTriggerSetting__mdt triggerHandlerSetting = (MyTriggerSetting__mdt) jsonObj.deserialize(MyTriggerSetting__mdt.class);
+		MyTriggerSetting__mdt triggerHandlerSetting = new MyTriggerSetting__mdt(
+			DeveloperName = 'TestHandler'+event.name(),
+			Event__c = event.name(),
+			sObject__c = objTypeName,
+			sobjectAPIName__c = objTypeName,
+			Class__c = className);
 		return triggerHandlerSetting;
 	}
 
@@ -138,7 +138,8 @@ private class MyTriggersTest {
 	// Handler Features
 	//--------------------------------------------------------------
 	// test #hasChangedFields and #getChangedFields for myTriggers
-	private static testMethod void fieldChangesTest(){
+	@isTest
+	private static void fieldChangesTest(){
 
 		String name = 'SAME_NAME';
 		Account record = new Account(Name = name, Phone = '123456');
@@ -162,7 +163,8 @@ private class MyTriggersTest {
 
 
 	// test for recusion control while updating
-	private static testMethod void recursionControlTest(){
+	@isTest
+	private static void recursionControlTest(){
 
 		Test.startTest();
 
@@ -173,7 +175,7 @@ private class MyTriggersTest {
 		};
 
 		hndl.doConstruct(records);
-		myTriggers.addUpdatedIds(new Set<Id>{UserInfo.getUserId()});
+		myTriggers.addUpdatedIds(new Set<Id> {UserInfo.getUserId()});
 
 		system.assertEquals(true,myTriggers.getUpdatedIds().contains(UserInfo.getUserId()));
 		system.assertEquals(null,hndl.getNonRecursiveRecords().get(0).Id,'should not return any record which id is returned by myTriggers.getUpdatedIds()');
@@ -186,7 +188,8 @@ private class MyTriggersTest {
 	//--------------------------------------------------------------
 
 	// test support with trigger control
-	private static testMethod void fromControlTest(){
+	@isTest
+	private static void fromControlTest(){
 
 		Type typ = AccountHandler.class;
 
@@ -217,7 +220,8 @@ private class MyTriggersTest {
 	}
 
 	// test support with trigger control
-	private static testMethod void fromControlTest_publicManagedHandlers(){
+	@isTest
+	private static void fromControlTest_publicManagedHandlers(){
 
 		Type typ = AccountHandler.class;
 		String namespacePrefix = '';
@@ -250,7 +254,8 @@ private class MyTriggersTest {
 
 
 	// Test for myTriggers.handleTrigger methods, with event control
-	private static testMethod void handleTriggerTest(){
+	@isTest
+	private static void handleTriggerTest(){
 
 		Test.startTest();
 
@@ -281,7 +286,8 @@ private class MyTriggersTest {
 	}
 
 	// Test for myTriggers.handleTrigger methods, with event control
-	private static testMethod void handleTriggerTest_publicManagedHandlers(){
+	@isTest
+	private static void handleTriggerTest_publicManagedHandlers(){
 
 		Test.startTest();
 
@@ -313,7 +319,8 @@ private class MyTriggersTest {
 		Test.stopTest();
 	}
 
-	private static testMethod void handleTriggerTest_UsingTriggerHandlerSettings(){
+	@isTest
+	private static void handleTriggerTest_UsingTriggerHandlerSettings(){
 
 		Test.startTest();
 
@@ -337,7 +344,8 @@ private class MyTriggersTest {
 		Test.stopTest();
 	}
 
-	private static testMethod void handleTriggerTest_NoExistingTriggerHandlers(){
+	@isTest
+	private static void handleTriggerTest_NoExistingTriggerHandlers(){
 
 		Test.startTest();
 
@@ -359,7 +367,8 @@ private class MyTriggersTest {
 
 
 	// controls all events via myTriggers.disable(Type) and myTriggers.enable(Type)
-	public static testMethod void dynamicControlAllTest_publicManagedHandlers(){
+	@isTest
+	public static void dynamicControlAllTest_publicManagedHandlers(){
 
 		Test.startTest();
 		Type typ = AccountHandler.class;
@@ -387,7 +396,8 @@ private class MyTriggersTest {
 	}
 
 	// controls all events via myTriggers.disable(Type) and myTriggers.enable(Type)
-	public static testMethod void dynamicControlAllTest(){
+	@isTest
+	public static void dynamicControlAllTest(){
 
 		Test.startTest();
 		Type typ = AccountHandler.class;
@@ -412,7 +422,8 @@ private class MyTriggersTest {
 
 
 	// enables all events via myTriggers.enable(Type, EventType[])
-	public static testMethod void dynamicControlTest(){
+	@isTest
+	public static void dynamicControlTest(){
 
 		Test.startTest();
 		Type typ = AccountHandler.class;
@@ -421,7 +432,7 @@ private class MyTriggersTest {
 		myTriggers.disable(typ);
 
 		// make sure all events are disabled
-		for (System.TriggerOperation tiggerEvent:System.TriggerOperation.values())	{
+		for (System.TriggerOperation tiggerEvent:System.TriggerOperation.values())      {
 			system.assert (myTriggers.isDisabled(typ, tiggerEvent),tiggerEvent.name() + ' shoud be disabled for ' + typ.toString());
 		}
 
@@ -429,7 +440,7 @@ private class MyTriggersTest {
 		// and enable all
 		myTriggers.enable(typ, System.TriggerOperation.values());
 
-		for (System.TriggerOperation tiggerEvent:System.TriggerOperation.values())	{
+		for (System.TriggerOperation tiggerEvent:System.TriggerOperation.values())      {
 			system.assert (!myTriggers.isDisabled(typ, tiggerEvent),tiggerEvent.name() + ' shoud be enabled for ' + typ.toString());
 		}
 
@@ -437,7 +448,8 @@ private class MyTriggersTest {
 	}
 
 	// enables all events via myTriggers.enable(Type, EventType[])
-	public static testMethod void dynamicControlTest_publicManagedHandlers() {
+	@isTest
+	public static void dynamicControlTest_publicManagedHandlers() {
 
 		Test.startTest();
 		Type typ = AccountHandler.class;
@@ -467,7 +479,8 @@ private class MyTriggersTest {
 
 
 	// tests myTriggers.run(Type) without Trigger context, coverage only
-	private static testMethod void nonTriggerContextTest() {
+	@isTest
+	private static void nonTriggerContextTest() {
 
 		Boolean success = true;
 		try
@@ -483,7 +496,8 @@ private class MyTriggersTest {
 
 
 	// calls virtual myTriggers methods, just for TestCoverage
-	private static testMethod void nonOverrideTest(){
+	@isTest
+	private static void nonOverrideTest(){
 
 		Test.startTest();
 
@@ -499,8 +513,13 @@ private class MyTriggersTest {
 		Test.stopTest();
 	}
 
+	/**
+	 * Individual Tests
+	 ********/
+
 	// calls getInsertEvents, getUpdateEvents and getDeleteEvents()
-	private static testMethod void getTypesTest(){
+	@isTest
+	private static void getTypesTest(){
 
 		Test.startTest();
 
@@ -516,7 +535,8 @@ private class MyTriggersTest {
 		Test.stopTest();
 	}
 
-	private static testMethod void getTriggerHandlerType_Success(){
+	@isTest
+	private static void getTriggerHandlerType_Success(){
 		Boolean success = true;
 
 		MyTriggerSetting__mdt triggerHandlerSetting = getTriggerHandlingSetting('Account', System.TriggerOperation.BEFORE_INSERT, 'myTriggersTest.AccountHandler');
@@ -525,7 +545,8 @@ private class MyTriggersTest {
 		System.assertEquals(myTriggersTest.AccountHandler.class, triggerHandlerType, 'Type of trigger handler should be found');
 	}
 
-	private static testMethod void getTriggerHandlerType_Failure_NoClassFound(){
+	@isTest
+	private static void getTriggerHandlerType_Failure_NoClassFound(){
 		Boolean success = true;
 
 		MyTriggerSetting__mdt invalidHandlerSetting = getTriggerHandlingSetting('Account', System.TriggerOperation.BEFORE_INSERT, 'InvalidClassname');
@@ -537,6 +558,111 @@ private class MyTriggersTest {
 		}
 
 		System.assertEquals(false, success, 'myTriggers.getTriggerHandlerType should fail for invalid trigger handler classname');
+	}
+
+	@isTest
+	private static void runQuery_Success() {
+		Exception ex;
+		String errorMsg = '';
+		try {
+			MyTriggers.runTriggerHandlerSettingsQuery('Account');
+		} catch (exception e) {
+			ex =e;
+			errorMsg = e.getMessage();
+		}
+		System.assertEquals(null,ex,'The custom metadata query must run without errors. '+errorMsg);
+	}
+
+	@isTest
+	private static void validate_NoError() {
+		Boolean success = true;
+		MyTriggers.qualifiedApiNameMock = 'Account';
+		try {
+			myTriggers.validate (getTriggerHandlingSettingsForSObjectType('Account'));
+		} catch(myTriggers.myTriggersException e) {
+			success = false;
+		}
+		System.assertEquals(true, success, 'Setting should pass since both sObject fields point to the same object');
+	}
+
+	@isTest
+	private static void validate_ValidException() {
+		Boolean success = true;
+		MyTriggers.qualifiedApiNameMock = 'Case';
+		try {
+			myTriggers.validate (getTriggerHandlingSettingsForSObjectType('Account'));
+		} catch(myTriggers.myTriggersException e) {
+			success = false;
+		}
+		System.assertEquals(false, success, 'Setting must raise exception since sObject fields point to different objects');
+	}
+
+	@isTest
+	private static void getNamespace_Success() {
+		System.assertEquals('myTriggersTest.AccountHandler'.toUpperCase(),
+		                    myTriggers.getClassNameWithNamespace(getTriggerHandlingSettingsForSObjectType('Account')[0]),
+		                    'Empty namespace in test context, all uppercase');
+	}
+
+	private static void filterForByPass_AllCases() {
+		List<MyTriggerSetting__mdt> originalTriggerHandlerSettings = getTriggerHandlingSettingsForSObjectType('Account');
+		List<MyTriggerSetting__mdt> filteredTriggerHandlerSettings = new List<MyTriggerSetting__mdt>();
+		filteredTriggerHandlerSettings = myTriggers.filterForBypass(originalTriggerHandlerSettings);
+		System.assertEquals (originalTriggerHandlerSettings.size(),
+		                     filteredTriggerHandlerSettings.size(),
+		                     'Default mode without bypass');
+
+		originalTriggerHandlerSettings[0].IsByPassAllowed__c = true;
+		filteredTriggerHandlerSettings = myTriggers.filterForBypass(originalTriggerHandlerSettings);
+		System.assertEquals (originalTriggerHandlerSettings.size(),
+		                     filteredTriggerHandlerSettings.size(),
+		                     'Bypass checkbox active but no custom permission makes no difference');
+
+		//enable permission
+		User userWithCustomPermission = new User (alias = 'test123',
+		                                          email='test123@noegmail.com.invalid',
+		                                          emailencodingkey='UTF-8',
+		                                          firstName='test123',
+		                                          lastname='Testing',
+		                                          languagelocalekey='en_US',
+		                                          localesidkey='en_US', profileid = UserInfo.getProfileId(), country='US',
+		                                          timezonesidkey='Asia/Kolkata', username='test123@noegmail.com.invalid');
+		System.runAs (new User (Id = UserInfo.getUserId())) {
+			insert userWithCustomPermission;
+
+			PermissionSet permSet = new PermissionSet(Label = 'mockPermset', Name = 'mockPermset');
+			insert permSet;
+
+			SetupEntityAccess sea = new SetupEntityAccess(
+				ParentId = permSet.Id,
+				SetupEntityId = [SELECT Id FROM CustomPermission
+				                 WHERE DeveloperName = 'bypassMyTriggers'][0].Id
+				);
+			insert sea;
+
+			PermissionSetAssignment permSetAssignment = new PermissionSetAssignment(
+				AssigneeId = userWithCustomPermission.Id,
+				PermissionSetId = permSet.Id
+				);
+			insert permSetAssignment;
+		}
+
+		System.runAs(userWithCustomPermission) {
+			originalTriggerHandlerSettings[0].IsByPassAllowed__c = null;
+			filteredTriggerHandlerSettings = myTriggers.filterForBypass(originalTriggerHandlerSettings);
+			System.assertEquals (originalTriggerHandlerSettings.size(),
+			                     filteredTriggerHandlerSettings.size(),
+			                     'Bypass permission active but no checkbox set makes no difference');
+		}
+
+		System.runAs(userWithCustomPermission) {
+			originalTriggerHandlerSettings[0].IsByPassAllowed__c = true;
+			filteredTriggerHandlerSettings = myTriggers.filterForBypass(originalTriggerHandlerSettings);
+			System.assertNotEquals (originalTriggerHandlerSettings.size(),
+			                        filteredTriggerHandlerSettings.size(),
+			                        'Bypass permission active and checkbox set must make a difference');
+		}
+
 	}
 
 }

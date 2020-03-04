@@ -2,7 +2,7 @@
 
     <lightning-layout vertical-align="stretch">
         <template for:each={elements} for:item='item'>
-            <lightning-layout-item key={item.key} size="2" class="custom-box">
+            <lightning-layout-item key={item.key} size={item.size} class="custom-box">
                 {item.label}
             </lightning-layout-item>
         </template>

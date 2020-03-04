@@ -5,88 +5,131 @@ import MyTriggerViewBase from 'c/myTriggerViewBase';
  * Show an item
  */
 export default class EventCentricView extends MyTriggerViewBase {
+
+    @track metadata = [];
+
     @api
-    mdtAsList;
+    set customMetadata(value) {
+        if (value.data) {
+            this.metadata = value.data;
+            this.options = this.calculateOptions();
+            this.currentFilter = this.calculateDefaultFilter();
+        }
+    }
+
+    get customMetadata(){
+        return this.metadata;
+    }
+
+    get rows(){
+        let mapped = this.mapTheData(this.metadata, this.currentFilter, this.headers);
+
+        let tableCells = [];
+        for (var index = 0; index < mapped.length; index++) {
+            tableCells.push(mapped[index]);
+        }
+        return tableCells;
+    }
+
+    get headers() {
+        let headers = [{"label":"Trigger Order","key":"-1","size" : 1}];
+        let currentFilt = this.currentFilter;
+        if (currentFilt.sobjectsValues) {
+            for (let index = 0; index < currentFilt.sobjectsValues.length; index++) {
+                headers.push({
+                    "label" : currentFilt.sobjectsValues[index],
+                    "key" : currentFilt.sobjectsValues[index],
+                    "size" : 2
+                });
+            }
+        }
+        return headers;
+    }
+
+    calculateDefaultFilter() {
+        let opt = this.options;
+
+        let valueClasses = [];
+        for (var i = 0; i < opt.optionClass.length; i++) {
+            valueClasses.push(opt.optionClass[i].value);
+        }
+        let valueSobjects = [];
+        for (var i = 0; i < opt.optionSobject.length; i++) {
+            valueSobjects.push(opt.optionSobject[i].value);
+        }
+        return {
+            "classValue" : valueClasses,
+            "sobjectsValues" : valueSobjects,
+            "crudValue" : opt.optionDml[0].value,
+            "timingValue" : opt.optionTiming[0].value
+        };
+    }
 
     handleFilterChange(event){
-        console.log('EventCentricView handleFilterChange');
         var filter = event.detail;
-        console.log(filter.classValue);
-        console.log(filter.sobjectsValues);
-        console.log(filter.crudValue);
-        console.log(filter.timingValue);
+        this.currentFilter = filter;
 
-        var headers = [{"label":"Trigger Order","key":"-1"}];
+        let headers = [{"label":"Trigger Order","key":"-1","size" : 1}];
         for (var index = 0; index < filter.sobjectsValues.length; index++) {
             headers.push({
                 "label" : filter.sobjectsValues[index],
-                "key" : filter.sobjectsValues[index]
+                "key" : filter.sobjectsValues[index],
+                "size" : 2
             });
         }
-        console.log('EventCentricView before mapTheData');
-        var mapped = this.mapTheData(this.customMDTs, filter, headers);
-        console.log(mapped);
+        var mapped = this.mapTheData(this.metadata, filter);
 
         var tableCells = [];
         for (var index = 0; index < mapped.length; index++) {
             tableCells.push(mapped[index]);
         }
 
-        console.log(tableCells);
 
         var table = this.template.querySelector('c-table-component');
         table.update(headers, tableCells);
     }
 
-    mapTheData(mdtDataAsList, filter, headers) {
-        console.log('EventCentricView mapTheData');
-        //console.log(mdtDataAsList);
+    mapTheData(mdtDataAsList, filter) {
         var mdtData = mdtDataAsList;
         var mapped = [];
-
-
-        //console.log('SobjectCentricView before possible');
+        
         var possibleOrderNumbers = this.collectAndSortPossibleOrderNumbers(mdtData);
+        if (filter.classValue) {
+            for (var mdtIndexer = 0; mdtIndexer < mdtData.length; mdtIndexer++) {
+                var mdtRow = mdtData[mdtIndexer];
+                var clasName = mdtRow.Class__c;
+                var triggerEventDML = mdtRow.Event__c.split('_')[1];
+                var triggerEventTime = mdtRow.Event__c.split('_')[0];
+                var sobject = mdtRow.sObject__c;
+                var orderNumber = mdtRow.Order__c;
 
-        for (var mdtIndexer = 0; mdtIndexer < mdtData.length; mdtIndexer++) {
-            var mdtRow = mdtData[mdtIndexer];
-            var clasName = mdtRow.Class__c;
-            var triggerEventDML = mdtRow.Event__c.split('_')[1];
-            var triggerEventTime = mdtRow.Event__c.split('_')[0];
-            var sobject = mdtRow.sObject__c;
-            var orderNumber = mdtRow.Order__c;
-            
-            //console.log(triggerEventTime + ' ' + triggerEventDML + ' ' + sobject + ' ' + clasName);
-            if (filter.classValue.includes(clasName)) {
-                if (filter.sobjectsValues.includes(sobject)) {
-                    if (filter.crudValue === triggerEventDML && filter.timingValue === triggerEventTime) {
-                        console.log(triggerEventTime + ' ' + triggerEventDML + ' ' + sobject + ' ' + clasName);
-                        var grandParent = mapped[0];
-                        if (grandParent == undefined) {
-                            mapped.push(
-                                this.createTablePiece(triggerEventTime, triggerEventDML)
-                            );
-                        }
+                if (filter.classValue.includes(clasName)) {
+                    if (filter.sobjectsValues.includes(sobject)) {
+                        if (filter.crudValue === triggerEventDML && filter.timingValue === triggerEventTime) {
+
+                            var grandParent = mapped[0];
+                            if (grandParent == undefined) {
+                                mapped.push(
+                                    this.createTablePiece(triggerEventTime, triggerEventDML)
+                                );
+                            }
                         
-                        var tablePiece = mapped[0].rows[0];
-                        console.log(tablePiece);
-                        var rowIndex = possibleOrderNumbers.indexOf(orderNumber);
-                        console.log(rowIndex);
-                        if (tablePiece.elements[rowIndex] == undefined) {
-                            tablePiece.elements[rowIndex] = this.createRowElement(rowIndex, orderNumber, filter.sobjectsValues);
+                            var tablePiece = mapped[0].rows[0];
+
+                            var rowIndex = possibleOrderNumbers.indexOf(orderNumber);
+
+                            if (tablePiece.elements[rowIndex] == undefined) {
+                                tablePiece.elements[rowIndex] = this.createRowElement(rowIndex, orderNumber, filter.sobjectsValues);
+                            }
+                            var rowElement = tablePiece.elements[rowIndex];
+                            var colIndex = filter.sobjectsValues.indexOf(sobject) + 1;
+
+                            rowElement.elements[colIndex] = this.createCellElement(colIndex, mdtRow.Description__c);
                         }
-                        var rowElement = tablePiece.elements[rowIndex];
-                        var colIndex = filter.sobjectsValues.indexOf(sobject) + 1;
-                        console.log(colIndex);
-                        rowElement.elements[colIndex] = this.createCellElement(colIndex, mdtRow.Description__c);
-                        console.log('EventCentricView mapped data in for cycle');
-                        console.log(mapped);
                     }
                 }
             }
         }
-        console.log('EventCentricView mapped data');
-        console.log(mapped);
         return mapped;
     }
 
@@ -106,7 +149,7 @@ export default class EventCentricView extends MyTriggerViewBase {
     }
 
     createRowElement(rowIndex,orderNumber,sobjectValues) {
-        var elements = [{"key":"0","label":orderNumber}];
+        var elements = [{"key":"0","label":orderNumber,"size" : 1}];
         for (var i = 0; i < sobjectValues.length; i++) {
             elements.push({"key":(i+1), "label":""});
         }
@@ -119,7 +162,8 @@ export default class EventCentricView extends MyTriggerViewBase {
     createCellElement(colIndex, description) {
         return {
             "key" : colIndex,
-            "label" : description
+            "label" : description,
+            "size" : 2
         };
     }
 

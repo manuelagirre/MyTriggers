@@ -2,15 +2,16 @@
     <lightning-tabset variant="scoped">
 
         <lightning-tab label="Business-centric">
-            <c-business-centric-view mdt-as-list={customMDTs}> </c-business-centric-view>
+            <c-business-centric-view custom-metadata={mdtFromApex}> </c-business-centric-view>
+        </lightning-tab>
+
+        <lightning-tab label="Sobject-centric">
+            <c-sobject-centric-view custom-metadata={mdtFromApex}></c-sobject-centric-view>
         </lightning-tab>
 
         <lightning-tab label="Event-centric">
-            <c-event-centric-view mdt-as-list={customMDTs}></c-event-centric-view>
+            <c-event-centric-view custom-metadata={mdtFromApex}></c-event-centric-view>
         </lightning-tab>
-        <lightning-tab label="Sobject-centric">
-            <c-sobject-centric-view mdt-as-list={customMDTs}></c-sobject-centric-view>
-        </lightning-tab>
-        
+
     </lightning-tabset>
 </template>

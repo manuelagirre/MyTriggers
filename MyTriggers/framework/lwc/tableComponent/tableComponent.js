@@ -6,13 +6,13 @@ import { LightningElement, api, track } from 'lwc';
 export default class TableComponent extends LightningElement {
 
     @track
-    headers = [{"label":"Header","key":"0"}];
+    _headers = [{"label":"Header","key":"0"}];
 
     @track
     ghostHeaders = [{"label":"","key":"0"}];
 
     @track
-    rows = [
+    _rows = [
         {
             "title" : "",
             "key" : "0",
@@ -40,7 +40,7 @@ export default class TableComponent extends LightningElement {
         var scrollValue = event.detail;
 
         var triggerSubItems = this.template.querySelectorAll('c-titled-row');
-        //console.log("titled row " + triggerSubItems.length);
+        ////console.log("titled row " + triggerSubItems.length);
         for (var index = 0; index < triggerSubItems.length; index++) {
             triggerSubItems[index].scroll(scrollValue);
         }
@@ -48,43 +48,45 @@ export default class TableComponent extends LightningElement {
 
     @api
     update(headers, rows) {
-        console.log("update table");
-        //console.log(headers);
-        //console.log(rows);
+        //console.log("TableComponent update");
+        ////console.log(headers);
+        ////console.log(rows);
 
-        this.headers = [];
+        this._headers = [];
         this.ghostHeaders = [];
         for (var index = 0; index < headers.length; index++) {
-            this.headers[index] = {
+            this._headers[index] = {
                 "label" : headers[index].label,
-                "key" : headers[index].key
+                "key" : headers[index].key,
+                "size" : headers[index].size
             };
             this.ghostHeaders[index] = {
                 "label" : "",
-                "key" : headers[index].key
+                "key" : headers[index].key,
+                "size" : headers[index].size
             }
-            //console.log(this.headers[index]);
+            ////console.log(this._headers[index]);
         }
 
-        this.rows = [];
+        this._rows = [];
         for (var index = 0; index < rows.length; index++) {
-            //console.log("dml row " + index + " " + rows[index].title);
+            ////console.log("dml row " + index + " " + rows[index].title);
             
             if (rows[index] != undefined) {
                 var innerRows = [];
-                //console.log(rows[index]);
-                //console.log(rows[index].rows);
+                ////console.log(rows[index]);
+                ////console.log(rows[index].rows);
                 for (var innerIndex = 0; innerIndex < rows[index].rows.length; innerIndex++) {
                     if (rows[index].rows[innerIndex] != undefined) {
-                        //console.log("timing row " + innerIndex + " " + rows[index].rows[innerIndex].title);
-                        //console.log(rows[index].rows[innerIndex]);
-                        //console.log("elements");
-                        //console.log(rows[index].rows[innerIndex].elements);
+                        ////console.log("timing row " + innerIndex + " " + rows[index].rows[innerIndex].title);
+                        ////console.log(rows[index].rows[innerIndex]);
+                        ////console.log("elements");
+                        ////console.log(rows[index].rows[innerIndex].elements);
                         var colElements;
                         if (rows[index].rows[innerIndex].isMultipleRows === "true") {
                             colElements = [];
                             for (var coly = 0; coly < rows[index].rows[innerIndex].elements.length; coly++) {
-                                //console.log("inner row " + coly);
+                                ////console.log("inner row " + coly);
                                 if (rows[index].rows[innerIndex].elements[coly] != undefined) {
                                     colElements.push(
                                         {
@@ -112,21 +114,52 @@ export default class TableComponent extends LightningElement {
                     }
                 }
 
-                this.rows.push(
+                this._rows.push(
                     {
                         "title" : rows[index].title,
                         "key" : rows[index].key,
                         "rows" : innerRows
                     }
                 );
-                //console.log(rows[index].rows);
+                ////console.log(rows[index].rows);
             }
             
         }
 
-        //console.log('data');
-        console.log(this.headers);
-        console.log(this.rows);
+        ////console.log('data');
+        ////console.log(JSON.stringify(this._headers));
+        ////console.log(JSON.stringify(this._rows));
     }
 
+    @api
+    set headers(value) {
+        //console.log("TableComponent set headers");
+        //console.log(JSON.stringify(value));
+        this.ghostHeaders = [];
+
+        for (var index = 0; index < value.length; index++) {
+            this.ghostHeaders[index] = {
+                "label" : "",
+                "key" : value[index].key,
+                "size" : value[index].size
+            }
+        }
+        this._headers = value;
+    }
+
+    get headers(){
+        return this._headers;
+    }
+
+    @api
+    set rows(value) {
+        //console.log("TableComponent set rows");
+        ////console.log(JSON.stringify(value));
+        this._rows = value;
+    }
+
+    get rows(){
+        //console.log("TableComponent get rows");
+        return this._row;
+    }
 }

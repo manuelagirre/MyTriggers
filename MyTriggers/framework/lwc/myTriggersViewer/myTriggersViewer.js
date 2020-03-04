@@ -6,7 +6,7 @@ export default class MyTriggersViewer extends LightningElement {
     @wire(getMDTRowsApex)
     mdtFromApex;
 
-    handleFilterChange(event){
+    /*handleFilterChange(event){
         var filter = event.detail;
         console.log(filter.classValue);
         console.log(filter.sobjectsValues);
@@ -96,5 +96,5 @@ export default class MyTriggersViewer extends LightningElement {
         } else {
             return [];
         }
-    }
+    }*/
 }

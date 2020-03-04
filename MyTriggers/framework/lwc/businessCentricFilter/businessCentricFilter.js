@@ -10,7 +10,44 @@ export default class BusinessCentricFilter extends LightningElement {
     @track valueSobjects = [];
     @track classValue = '';
 
-    @api filterOptions;
+    @track filterOptions = {"optionTiming" : [], "optionDml":[],"optionClass":[],"optionSobject":[]};
+    
+    @api
+    set options(value) {
+        //console.log("BusinessCentricFilter set selected");
+        //console.log(JSON.stringify(value));
+        this.filterOptions = value;
+        if (value.optionTiming) {
+            this.setupDefaultValues();
+        }
+    }
+
+    get options(){
+        return this.filterOptions;
+    }
+
+    setupDefaultValues(){
+        //console.log("BusinessCentricFilter setupDefaultValues");
+        for (let i = 0; i < this.filterOptions.optionTiming.length; i++) {
+            this.valueBA.push(this.filterOptions.optionTiming[i].value);
+        }
+        for (let i = 0; i < this.filterOptions.optionDml.length; i++) {
+            this.valueCRUD.push(this.filterOptions.optionDml[i].value);
+        }
+        for (let i = 0; i < this.filterOptions.optionSobject.length; i++) {
+            this.valueSobjects.push(this.filterOptions.optionSobject[i].value);
+        }
+        
+        this.classValue = this.filterOptions.optionClass[0].value;
+        
+        //this.valueBA = this.filterOptions.optionTiming;
+        //console.log(JSON.stringify(this.valueBA));
+        //console.log(JSON.stringify(this.valueCRUD));
+        //console.log(JSON.stringify(this.valueSobjects));
+        //console.log(JSON.stringify(this.classValue));
+
+        //this.dispatchFilterChange();
+    }
 
     get optionsBA() {
         return this.filterOptions.optionTiming;
@@ -43,6 +80,8 @@ export default class BusinessCentricFilter extends LightningElement {
     }
 
     handleSobjectChange(event) {
+        console.log("handleSobjectChange");
+        console.log(event.detail.value);
         this.valueSobjects = event.detail.value;
         this.dispatchFilterChange();
     }
@@ -63,16 +102,19 @@ export default class BusinessCentricFilter extends LightningElement {
             timingValues.push(this.valueBA[i]);
         }
 
+        let detailtoSend = {
+            "classValue" : this.classValue,
+            "sobjectsValues" : sobjectValues,
+            "crudValue" : crudValues,
+            "timingValue" : timingValues
+        };
+        console.log(detailtoSend);
+
         this.dispatchEvent(
             new CustomEvent(
                 'filterchange', 
                 { 
-                    detail: {
-                        "classValue" : this.classValue,
-                        "sobjectsValues" : sobjectValues,
-                        "crudValue" : crudValues,
-                        "timingValue" : timingValues
-                    }
+                    detail: detailtoSend
                 }
             )
         );

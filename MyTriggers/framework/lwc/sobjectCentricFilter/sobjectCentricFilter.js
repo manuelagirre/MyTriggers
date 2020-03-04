@@ -9,7 +9,42 @@ export default class SobjectCentricFilter extends LightningElement {
     @track valueSobjects = '';
     @track classValue = [];
 
-    @api filterOptions;
+    @track filterOptions = {"optionTiming" : [], "optionDml":[],"optionClass":[],"optionSobject":[]};
+
+    @api
+    set options(value) {
+        this.filterOptions = value;
+        if (value.optionTiming) {
+            this.setupDefaultValues();
+        }
+    }
+
+    get options(){
+        return this.filterOptions;
+    }
+
+    setupDefaultValues(){
+        console.log("SobjectCentricFilter setupDefaultValues");
+        for (let i = 0; i < this.filterOptions.optionTiming.length; i++) {
+            this.valueBA.push(this.filterOptions.optionTiming[i].value);
+        }
+        for (let i = 0; i < this.filterOptions.optionDml.length; i++) {
+            this.valueCRUD.push(this.filterOptions.optionDml[i].value);
+        }
+        for (let i = 0; i < this.filterOptions.optionClass.length; i++) {
+            this.classValue.push(this.filterOptions.optionClass[i].value);
+        }
+        
+        this.valueSobjects = this.filterOptions.optionSobject[0].value;
+        
+        //this.valueBA = this.filterOptions.optionTiming;
+        console.log(JSON.stringify(this.valueBA));
+        console.log(JSON.stringify(this.valueCRUD));
+        console.log(JSON.stringify(this.valueSobjects));
+        console.log(JSON.stringify(this.classValue));
+
+        //this.dispatchFilterChange();
+    }
 
     get optionsBA() {
         return this.filterOptions.optionTiming;

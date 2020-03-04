@@ -9,7 +9,44 @@ export default class EventCentricFilter extends LightningElement {
     @track valueBA = '';
     @track valueCRUD = '';
    
-    @api filterOptions;
+    @track filterOptions = {"optionTiming" : [], "optionDml":[],"optionClass":[],"optionSobject":[]};
+
+    @api
+    set options(value) {
+        //console.log("EventCentricFilter set options");
+        this.filterOptions = value;
+        if (value.optionTiming) {
+            this.setupDefaultValues();
+        }
+    }
+
+    get options() {
+        //console.log("EventCentricFilter get options");
+        return this.filterOptions;
+    }
+
+    setupDefaultValues() {
+        //console.log("EventCentricFilter setupDefaultValues");
+        
+        this.valueBA = this.filterOptions.optionTiming[0].value;
+
+        this.valueCRUD = this.filterOptions.optionDml[0].value;
+
+        for (let i = 0; i < this.filterOptions.optionSobject.length; i++) {
+            this.valueSobjects.push(this.filterOptions.optionSobject[i].value);
+        }
+
+        for (let i = 0; i < this.filterOptions.optionClass.length; i++) {
+            this.valueClasses.push(this.filterOptions.optionClass[i].value);
+        }
+        //this.valueBA = this.filterOptions.optionTiming;
+        //console.log(JSON.stringify(this.valueBA));
+        //console.log(JSON.stringify(this.valueCRUD));
+        //console.log(JSON.stringify(this.valueSobjects));
+        //console.log(JSON.stringify(this.valueClasses));
+
+        //this.dispatchFilterChange();
+    }
 
     get optionsBA() {
         return this.filterOptions.optionTiming;
@@ -48,16 +85,18 @@ export default class EventCentricFilter extends LightningElement {
     }
 
     dispatchFilterChange() {
-        var valueClasses = [];
+        //console.log("EventCentricFilter dispatchFilterChange");
+        //console.log(JSON.stringify(this.valueClasses));
+        let valueClasses = [];
         for (var i = 0; i < this.valueClasses.length; i++) {
             valueClasses.push(this.valueClasses[i]);
         }
-
-        var valueSobjects = [];
+        //console.log(JSON.stringify(this.valueSobjects));
+        let valueSobjects = [];
         for (var i = 0; i < this.valueSobjects.length; i++) {
             valueSobjects.push(this.valueSobjects[i]);
         }
-
+        //alert(JSON.stringify(valueClasses) + ' ' + JSON.stringify(valueSobjects) + ' ' + JSON.stringify(this.valueCRUD) + ' ' + JSON.stringify(this.valueBA));
         this.dispatchEvent(
             new CustomEvent(
                 'filterchange', 

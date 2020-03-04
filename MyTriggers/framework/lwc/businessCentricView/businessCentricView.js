@@ -5,34 +5,91 @@ import MyTriggerViewBase from 'c/myTriggerViewBase';
  * Show an item
  */
 export default class BusinessCentricView extends MyTriggerViewBase {
-    @api
-    mdtAsList;
+
+    @track metadata = [];
 
     @api
-    isCard;
-    
+    set customMetadata(value) {
+        if (value.data) {
+            this.metadata = value.data;
+            this.options = this.calculateOptions();
+            this.currentFilter = this.calculateDefaultFilter();
+        }
+    }
+
+    get customMetadata(){
+        return this.metadata;
+    }
+
+    get rows(){
+        let mapped = this.mapTheData(this.metadata, this.currentFilter);
+
+        let tableCells = [];
+        for (var index = 0; index < mapped.length; index++) {
+            tableCells.push(mapped[index]);
+        }
+        return tableCells;
+    }
+
+    get headers() {
+        let headers = [];
+        //let filterOpt = this.filterOptions;
+        if (this.currentFilter.sobjectsValues) {
+            for (let index = 0; index < this.currentFilter.sobjectsValues.length; index++) {
+                headers.push({
+                    "label" : this.currentFilter.sobjectsValues[index],
+                    "key" : this.currentFilter.sobjectsValues[index],
+                    "size" : 2
+                });
+            }
+        }
+        return headers;
+    }
+
+    calculateDefaultFilter() {
+        let opt = this.options;
+        
+        let valueSobjects = [];
+        for (var i = 0; i < opt.optionSobject.length; i++) {
+            valueSobjects.push(opt.optionSobject[i].value);
+        }
+        var crudValues = [];
+        for (var i = 0; i < opt.optionDml.length; i++) {
+            crudValues.push(opt.optionDml[i].value);
+        }
+
+        var timingValues = [];
+        for (var i = 0; i < opt.optionTiming.length; i++) {
+            timingValues.push(opt.optionTiming[i].value);
+        }
+        return {
+            "classValue" : opt.optionClass[0].value,
+            "sobjectsValues" : valueSobjects,
+            "crudValue" : crudValues,
+            "timingValue" : timingValues
+        };
+    }
+
     handleFilterChange(event){
-        var filter = event.detail;
-        console.log(filter.classValue);
-        console.log(filter.sobjectsValues);
-        console.log(filter.crudValue);
-        console.log(filter.timingValue);
+        console.log("BusinessCentricView handleFilterChange");
+        let filter = event.detail;
+        this.currentFilter = filter;
 
-        var headers = [];
-        for (var index = 0; index < filter.sobjectsValues.length; index++) {
+        let headers = [];
+        for (var index = 0; index < this.currentFilter.sobjectsValues.length; index++) {
             headers.push({
                 "label" : filter.sobjectsValues[index],
-                "key" : filter.sobjectsValues[index]
+                "key" : filter.sobjectsValues[index],
+                "size" : 2
             });
         }
-        var mapped = this.mapTheData(this.customMDTs, filter);
+        console.log(headers);
+        var mapped = this.mapTheData(this.metadata, filter);
 
         var tableCells = [];
         for (var index = 0; index < mapped.length; index++) {
             tableCells.push(mapped[index]);
         }
-
-        console.log(tableCells);
 
         var table = this.template.querySelector('c-table-component');
         table.update(headers, tableCells);
@@ -52,7 +109,6 @@ export default class BusinessCentricView extends MyTriggerViewBase {
             var eventDMLOrderNumber = this.possibleDMLs.indexOf(triggerEventDML);
             var eventTimingOrderNumber = this.possibleTimings.indexOf(triggerEventTime);
 
-            //console.log(clasName + ' ' + triggerEventDML + ' ' + triggerEventTime + ' ' + sobject);
             if (clasName === filter.classValue) {
                 if (filter.crudValue.includes(triggerEventDML)) {
 
@@ -102,8 +158,9 @@ export default class BusinessCentricView extends MyTriggerViewBase {
 
     createCellElement(description, key) {
         return {
-            "label" : description,//mdtRow.Description__c,
-            "key" : key//filter.sobjectsValues.indexOf(sobject)
+            "label" : description,
+            "key" : key,
+            "size" : 2
         };
     }
 }

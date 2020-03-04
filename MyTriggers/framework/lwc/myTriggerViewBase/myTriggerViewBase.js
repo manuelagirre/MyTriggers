@@ -1,21 +1,39 @@
-import {LightningElement, wire, api} from 'lwc';
-import getMDTRowsApex from '@salesforce/apex/MyTriggers.getAllTriggerHandlerSettings';
+import {LightningElement, wire, api, track} from 'lwc';
+//import getMDTRowsApex from '@salesforce/apex/MyTriggers.getAllTriggerHandlerSettings';
 
 export default class MyTriggerViewBase extends LightningElement {
 
-    @wire(getMDTRowsApex)
-    mdtFromApex;
+    //@wire(getMDTRowsApex)
+    //mdtFromApex;
 
-    get customMDTs(){
-        console.log(this.mdtFromApex.data);
-        if (this.mdtFromApex.data != undefined) {
-            return this.mdtFromApex.data;
-        } else {
-            return [];
-        }
-    }
+    /*@api
+    customMetadata;*/
+
+    
+
+    @track options = {};
+
+    @track _currentFilter = {};
+
+    
 
     get filterOptions() {
+        //console.log("MyTriggerViewBase get filterOptions");
+        return this.options;
+    }
+
+    @api
+    set currentFilter(value) {
+        this._currentFilter = value;
+    }
+
+    get currentFilter() {
+        return this._currentFilter;
+    }
+
+    calculateOptions() {
+        //console.log("MyTriggerViewBase get calculateOptions");
+        ////console.log(JSON.stringify(this.customMetadata));
         var optionsTiming = [];
         var includedTiming = [];
 
@@ -28,9 +46,12 @@ export default class MyTriggerViewBase extends LightningElement {
         var optionsClasses = [];
         var includedClasses = [];
 
-        for (var i = 0; i < this.customMDTs.length; i++) {
+        let customMDT = this.customMetadata;
 
-            var mdtRow = this.customMDTs[i];
+        for (var i = 0; i < customMDT.length; i++) {
+
+            var mdtRow = customMDT[i];
+            ////console.log(mdtRow); 
             var clasName = mdtRow.Class__c;
             var triggerEventDML = mdtRow.Event__c.split('_')[1];
             var triggerEventTime = mdtRow.Event__c.split('_')[0];
@@ -39,28 +60,36 @@ export default class MyTriggerViewBase extends LightningElement {
             if (includedTiming.indexOf(triggerEventTime) < 0) {
                 includedTiming.push(triggerEventTime);
                 optionsTiming.push({
-                    label: triggerEventTime, value: triggerEventTime
+                    label: triggerEventTime, 
+                    value: triggerEventTime, 
+                    defaultValue: true
                 });
             }
 
             if (includedDmls.indexOf(triggerEventDML) < 0) {
                 includedDmls.push(triggerEventDML);
                 optionsDml.push({
-                    label: triggerEventDML, value: triggerEventDML
+                    label: triggerEventDML, 
+                    value: triggerEventDML,
+                    defaultValue: true
                 });
             }
 
             if (includedSobjects.indexOf(sobject) < 0) {
                 includedSobjects.push(sobject);
                 optionsSobject.push({
-                    label: sobject, value: sobject
+                    label: sobject, 
+                    value: sobject,
+                    defaultValue: true
                 });
             }
 
             if (includedClasses.indexOf(clasName) < 0) {
                 includedClasses.push(clasName);
                 optionsClasses.push({
-                    label: clasName, value: clasName
+                    label: clasName, 
+                    value: clasName,
+                    defaultValue: true
                 });
             }
         }
@@ -71,6 +100,8 @@ export default class MyTriggerViewBase extends LightningElement {
             "optionSobject" : optionsSobject,
             "optionClass" : optionsClasses
         };
+
+        //console.log(result);
 
         return result;
     }
@@ -88,7 +119,7 @@ export default class MyTriggerViewBase extends LightningElement {
         for (var mdtIndexer = 0; mdtIndexer < mdtData.length; mdtIndexer++) {
             var mdtRow = mdtData[mdtIndexer];
             var orderNumber = mdtRow.Order__c;
-            //console.log(orderNumber);
+            ////console.log(orderNumber);
             if (!possibleOrderNumbers.includes(orderNumber)) {
                 possibleOrderNumbers.push(orderNumber);
             }

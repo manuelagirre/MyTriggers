@@ -5,13 +5,15 @@
             <div class="slds-p-around_small">
                 <c-event-centric-filter 
                     onfilterchange={handleFilterChange}
-                    filter-options={filterOptions}>
+                    options={filterOptions}>
                 </c-event-centric-filter>
             </div>
         </lightning-layout-item>
         <lightning-layout-item size="9">
             <div class="slds-p-around_small">
-                <c-table-component></c-table-component>
+                <c-table-component headers={headers} rows={rows}>
+
+                </c-table-component>
             </div>
         </lightning-layout-item>
     </lightning-layout>

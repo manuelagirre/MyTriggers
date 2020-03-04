@@ -5,25 +5,97 @@ import MyTriggerViewBase from 'c/myTriggerViewBase';
  * Show an item
  */
 export default class SobjectCentricView extends MyTriggerViewBase {
+    @track metadata = [];
+
     @api
-    mdtAsList;
+    set customMetadata(value) {
+        console.log("SobjectCentricView set customMetadata");
+        console.log(value.data);
+        if (value.data) {
+            this.metadata = value.data;
+            this.options = this.calculateOptions();
+            this.currentFilter = this.calculateDefaultFilter();
+        }
+    }
+
+    get customMetadata(){
+        console.log("SobjectCentricView get customMetadata");
+        return this.metadata;
+    }
+
+    get rows(){
+        console.log("SobjectCentricView get rows");
+        let mapped = this.mapTheData(this.metadata, this.currentFilter);
+
+        let tableCells = [];
+        for (var index = 0; index < mapped.length; index++) {
+            tableCells.push(mapped[index]);
+        }
+        return tableCells;
+    }
+
+    get headers() {
+        console.log("SobjectCentricView get headers");
+        let headers = [{"label":"Trigger Order","key":"-1","size" : 1}];
+        let filter = this.currentFilter;
+        if (filter.classValue) {
+            console.log(JSON.stringify(filter.classValue));
+            for (let index = 0; index < filter.classValue.length; index++) {
+                headers.push({
+                    "label" : filter.classValue[index],
+                    "key" : filter.classValue[index],
+                    "size" : 2
+                });
+            }
+        }
+        console.log(headers);
+        return headers;
+    }
+
+    calculateDefaultFilter() {
+        console.log("SobjectCentricView calculateDefaultFilter");
+        let opt = this.options;
+        
+        let valueClasses = [];
+        for (var i = 0; i < opt.optionClass.length; i++) {
+            valueClasses.push(opt.optionClass[i].value);
+        }
+        let valueDml = [];
+        for (var i = 0; i < opt.optionDml.length; i++) {
+            valueDml.push(opt.optionDml[i].value);
+        }
+        let valueTiming = [];
+        for (var i = 0; i < opt.optionTiming.length; i++) {
+            valueTiming.push(opt.optionTiming[i].value);
+        }
+        return {
+            "classValue" : valueClasses,
+            "sobjectsValues" : opt.optionSobject[0].value,
+            "crudValue" : valueDml,
+            "timingValue" : valueTiming
+        };
+    }
 
     handleFilterChange(event){
-        console.log('SobjectCentricView handleFilterChange');
+        console.log("SobjectCentricView handleFilterChange");
         var filter = event.detail;
+        this.currentFilter = filter;
+
         console.log(filter.classValue);
         console.log(filter.sobjectsValues);
         console.log(filter.crudValue);
         console.log(filter.timingValue);
+        
 
-        var headers = [{"label":"Trigger Order","key":"-1"}];
+        var headers = [{"label":"Trigger Order","key":"-1","size" : 1}];
         for (var index = 0; index < filter.classValue.length; index++) {
             headers.push({
                 "label" : filter.classValue[index],
-                "key" : filter.classValue[index]
+                "key" : filter.classValue[index],
+                "size" : 2
             });
         }
-        var mapped = this.mapTheData(this.customMDTs, filter, headers);
+        var mapped = this.mapTheData(this.metadata, filter);
 
         var tableCells = [];
         for (var index = 0; index < mapped.length; index++) {
@@ -36,7 +108,7 @@ export default class SobjectCentricView extends MyTriggerViewBase {
         table.update(headers, tableCells);
     }
 
-    mapTheData(mdtDataAsList, filter, headers) {
+    mapTheData(mdtDataAsList, filter) {
         console.log('SobjectCentricView mapTheData');
         //console.log(mdtDataAsList);
         var mdtData = mdtDataAsList;
@@ -116,11 +188,12 @@ export default class SobjectCentricView extends MyTriggerViewBase {
 
                             if (rowElement != undefined) {
                                 //console.log(rowElement);
-                                for (var coly = 0; coly < headers.length; coly++) {
+                                for (var coly = 0; coly < filter.classValue.length+1; coly++) {
                                     if (rowElement.elements[coly] == undefined) {
                                         rowElement.elements[coly] = {
                                             "label" : "",
-                                            "key" : coly
+                                            "key" : coly,
+                                            "size" : 2
                                         };
                                     }
                                 }
@@ -157,14 +230,15 @@ export default class SobjectCentricView extends MyTriggerViewBase {
     createChildRowElement(rowIndex, orderNumber) {
         return {
             "key" : rowIndex,
-            "elements" : [{"key":"0","label":orderNumber}]
+            "elements" : [{"key":"0","label":orderNumber,"size" : 1}]
         };
     }
 
     createCellElement(description, className) {
         return {
-            "label" : description,//mdtRow.Description__c,
-            "key" : className//filter.classValue.indexOf(clasName)
+            "label" : description,
+            "key" : className,
+            "size" : 2
         };
     }
 }

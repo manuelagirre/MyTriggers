@@ -1,6 +1,6 @@
 <template>
     <div class="slds-grid slds-wrap">
-        <div class="slds-col slds-size_1-of-2">
+        <div class="slds-col slds-size_2-of-2">
             <lightning-combobox
                 name="progress"
                 label="When?"
@@ -10,7 +10,8 @@
                 onchange={handleDMLTimingChange}></lightning-combobox>
                 
         </div>
-        <div class="slds-col slds-size_1-of-2">
+
+        <div class="slds-col slds-size_2-of-2">
             <lightning-combobox
                 name="progress"
                 label="DML"
@@ -20,28 +21,13 @@
                 onchange={handleDMLTypeChange}></lightning-combobox>
                 
         </div>
-        <div class="slds-col slds-size_1-of-2">
-            <lightning-dual-listbox name="Sobjects"
-                                label="Select Sobjects"
-                                source-label="Available"
-                                selected-label="Selected"
-                                field-level-help="Select Sobject to be filtered on the view"
-                                options={optionsSobjects}
-                                value={valueSobjects}
-                                onchange={handleSobjectChange}>
-            </lightning-dual-listbox>
+
+        <div class="slds-col slds-size_2-of-2 slds-m-top_small">
+            <c-toggle-picklist options={optionsSobjects} onchange={handleSobjectChange} title="Choose Sobjects"></c-toggle-picklist>
         </div>
-        <div class="slds-col slds-size_1-of-2">
-            <lightning-dual-listbox name="Classes"
-                                label="Select Apex Classes"
-                                source-label="Available"
-                                selected-label="Selected"
-                                field-level-help="Select Sobject to be filtered on the view"
-                                options={optionsClasses}
-                                value={valueClasses}
-                                onchange={handleClassChange}>
-            </lightning-dual-listbox>
+
+        <div class="slds-col slds-size_2-of-2 slds-m-top_small">
+            <c-toggle-picklist options={optionsClasses} onchange={handleClassChange} title="Choose Classes"></c-toggle-picklist>
         </div>
     </div>
-    
 </template>

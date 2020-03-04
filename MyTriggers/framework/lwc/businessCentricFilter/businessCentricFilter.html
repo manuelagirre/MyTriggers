@@ -9,26 +9,20 @@
                 placeholder="Select Apex Class"
                 onchange={handleClassChange}></lightning-combobox>
         </div>
-        <div class="slds-col slds-size_1-of-2">
-            <lightning-dual-listbox name="Sobjects"
-                                label="Select Sobjects"
-                                source-label="Available"
-                                selected-label="Selected"
-                                field-level-help="Select Sobject to be filtered on the view"
-                                options={optionsSobjects}
-                                value={valueSobjects}
-                                onchange={handleSobjectChange}>
-            </lightning-dual-listbox>
+
+        <div class="slds-col slds-size_2-of-2 slds-m-top_small">
+            <c-toggle-picklist options={optionsSobjects} onchange={handleSobjectChange} title="Choose Sobjects"></c-toggle-picklist>
         </div>
         
-        <div class="slds-col slds-size_1-of-4">
+        <div class="slds-col slds-size_1-of-2 slds-align_absolute-center">
             <lightning-checkbox-group name=""
                                 label="When?"
                                 options={optionsBA}
                                 value={valueBA}
                                 onchange={handleDMLTimingChange}></lightning-checkbox-group>
         </div>
-        <div class="slds-col slds-size_1-of-4">
+
+        <div class="slds-col slds-size_1-of-2 slds-align_absolute-center">
             <lightning-checkbox-group name="Checkbox Group"
                                 label="DML type"
                                 options={optionsCRUD}

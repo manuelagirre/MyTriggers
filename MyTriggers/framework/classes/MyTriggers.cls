@@ -770,6 +770,7 @@ global virtual class MyTriggers {
                         Event__c, 
                         sObject__c,
                         sObject__r.QualifiedApiName, 
+						sObjectAPIName__c,
                         Class__c, 
                         Order__c,
                         Description__c
@@ -778,7 +779,7 @@ global virtual class MyTriggers {
                 ORDER BY Order__c, 
                          DeveloperName ASC]);
         }
-
+		System.debug(JSON.serialize(triggerHandlerSettings));
         return triggerHandlerSettings;
     }
 	

@@ -128,7 +128,11 @@ export default class SobjectCentricView extends MyTriggerViewBase {
             var clasName = mdtRow.Class__c;
             var triggerEventDML = mdtRow.Event__c.split('_')[1];
             var triggerEventTime = mdtRow.Event__c.split('_')[0];
-            var sobject = mdtRow.sObject__c;
+            var sobject = (
+				mdtRow.sObject__c === null || mdtRow.sObject__c === "" || mdtRow.sObject__c === undefined 
+					? mdtRow.sObjectAPIName__c 
+					: mdtRow.sObject__c
+			);
             var orderNumber = mdtRow.Order__c;
             
             //console.log(clasName + ' ' + triggerEventDML + ' ' + triggerEventTime + ' ' + sobject);

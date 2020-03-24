@@ -11,6 +11,7 @@ export default class BusinessCentricView extends MyTriggerViewBase {
     @api
     set customMetadata(value) {
         if (value.data) {
+			console.log("BusinessCentricView customMetadata " + JSON.stringify(value.data));
             this.metadata = value.data;
             this.options = this.calculateOptions();
             this.currentFilter = this.calculateDefaultFilter();
@@ -104,7 +105,11 @@ export default class BusinessCentricView extends MyTriggerViewBase {
             var clasName = mdtRow.Class__c;
             var triggerEventDML = mdtRow.Event__c.split('_')[1];
             var triggerEventTime = mdtRow.Event__c.split('_')[0];
-            var sobject = mdtRow.sObject__c;
+            var sobject = (
+				mdtRow.sObject__c === null || mdtRow.sObject__c === "" || mdtRow.sObject__c === undefined 
+					? mdtRow.sObjectAPIName__c 
+					: mdtRow.sObject__c
+			);
 
             var eventDMLOrderNumber = this.possibleDMLs.indexOf(triggerEventDML);
             var eventTimingOrderNumber = this.possibleTimings.indexOf(triggerEventTime);

@@ -32,8 +32,8 @@ export default class MyTriggerViewBase extends LightningElement {
     }
 
     calculateOptions() {
-        //console.log("MyTriggerViewBase get calculateOptions");
-        ////console.log(JSON.stringify(this.customMetadata));
+        console.log("MyTriggerViewBase get calculateOptions");
+        console.log(JSON.stringify(this.customMetadata));
         var optionsTiming = [];
         var includedTiming = [];
 
@@ -55,8 +55,14 @@ export default class MyTriggerViewBase extends LightningElement {
             var clasName = mdtRow.Class__c;
             var triggerEventDML = mdtRow.Event__c.split('_')[1];
             var triggerEventTime = mdtRow.Event__c.split('_')[0];
-            var sobject = mdtRow.sObject__c;
-
+			console.log("sobject " + mdtRow.sObject__c);
+			console.log("sobjectapi " + mdtRow.sObjectAPIName__c);
+            var sobject = (
+				mdtRow.sObject__c === null || mdtRow.sObject__c === "" || mdtRow.sObject__c === undefined 
+					? mdtRow.sObjectAPIName__c 
+					: mdtRow.sObject__c
+			);
+			console.log("sobject " + sobject);
             if (includedTiming.indexOf(triggerEventTime) < 0) {
                 includedTiming.push(triggerEventTime);
                 optionsTiming.push({

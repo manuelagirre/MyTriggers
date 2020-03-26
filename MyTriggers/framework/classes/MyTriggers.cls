@@ -766,6 +766,7 @@ global virtual class MyTriggers {
         } else {
             triggerHandlerSettings = new List<MyTriggerSetting__mdt>(
                 [SELECT DeveloperName, 
+						Label,
                         ClassNamespacePrefix__c, 
                         Event__c, 
                         sObject__c,
@@ -773,7 +774,9 @@ global virtual class MyTriggers {
 						sObjectAPIName__c,
                         Class__c, 
                         Order__c,
-                        Description__c
+                        Description__c,
+						Active__c,
+						IsBypassAllowed__c
                 FROM MyTriggerSetting__mdt
                 WHERE Active__c = true
                 ORDER BY Order__c, 

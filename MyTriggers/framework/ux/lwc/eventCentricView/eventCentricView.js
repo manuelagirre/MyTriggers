@@ -96,16 +96,17 @@ export default class EventCentricView extends MyTriggerViewBase {
         var possibleOrderNumbers = this.collectAndSortPossibleOrderNumbers(mdtData);
         if (filter.classValue) {
             for (var mdtIndexer = 0; mdtIndexer < mdtData.length; mdtIndexer++) {
-                var mdtRow = mdtData[mdtIndexer];
-                var clasName = mdtRow.Class__c;
-                var triggerEventDML = mdtRow.Event__c.split('_')[1];
-                var triggerEventTime = mdtRow.Event__c.split('_')[0];
-                var sobject = (
+                let mdtRow = mdtData[mdtIndexer];
+				let mdtId = mdtRow.Id;
+                let clasName = mdtRow.Class__c;
+                let triggerEventDML = mdtRow.Event__c.split('_')[1];
+                let triggerEventTime = mdtRow.Event__c.split('_')[0];
+                let sobject = (
 					mdtRow.sObject__c === null || mdtRow.sObject__c === "" || mdtRow.sObject__c === undefined 
 						? mdtRow.sObjectAPIName__c 
 						: mdtRow.sObject__c
 				);
-                var orderNumber = mdtRow.Order__c;
+                let orderNumber = mdtRow.Order__c;
 
                 if (filter.classValue.includes(clasName)) {
                     if (filter.sobjectsValues.includes(sobject)) {
@@ -128,7 +129,7 @@ export default class EventCentricView extends MyTriggerViewBase {
                             var rowElement = tablePiece.elements[rowIndex];
                             var colIndex = filter.sobjectsValues.indexOf(sobject) + 1;
 
-                            rowElement.elements[colIndex] = this.createCellElement(colIndex, mdtRow.Description__c);
+                            rowElement.elements[colIndex] = this.createCellElement(mdtId, mdtRow.Description__c);
                         }
                     }
                 }
@@ -166,6 +167,7 @@ export default class EventCentricView extends MyTriggerViewBase {
     createCellElement(colIndex, description) {
         return {
             "key" : colIndex,
+			"id" : colIndex,
             "label" : description,
             "size" : 2
         };

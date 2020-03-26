@@ -124,16 +124,17 @@ export default class SobjectCentricView extends MyTriggerViewBase {
         console.log(possibleOrderNumbers);
 
         for (var mdtIndexer = 0; mdtIndexer < mdtData.length; mdtIndexer++) {
-            var mdtRow = mdtData[mdtIndexer];
-            var clasName = mdtRow.Class__c;
-            var triggerEventDML = mdtRow.Event__c.split('_')[1];
-            var triggerEventTime = mdtRow.Event__c.split('_')[0];
-            var sobject = (
+            let mdtRow = mdtData[mdtIndexer];
+			let mdtId = mdtRow.Id;
+            let clasName = mdtRow.Class__c;
+            let triggerEventDML = mdtRow.Event__c.split('_')[1];
+            let triggerEventTime = mdtRow.Event__c.split('_')[0];
+            let sobject = (
 				mdtRow.sObject__c === null || mdtRow.sObject__c === "" || mdtRow.sObject__c === undefined 
 					? mdtRow.sObjectAPIName__c 
 					: mdtRow.sObject__c
 			);
-            var orderNumber = mdtRow.Order__c;
+            let orderNumber = mdtRow.Order__c;
             
             //console.log(clasName + ' ' + triggerEventDML + ' ' + triggerEventTime + ' ' + sobject);
             if (sobject === filter.sobjectsValues) {
@@ -164,7 +165,7 @@ export default class SobjectCentricView extends MyTriggerViewBase {
 
                             var rowElement = parent.elements[rowIndex];
                             rowElement.elements[filter.classValue.indexOf(clasName)+1] = 
-                                this.createCellElement(mdtRow.Description__c, filter.classValue.indexOf(clasName));
+                                this.createCellElement(mdtRow.Description__c, mdtId);
                         }
 
                     }
@@ -238,10 +239,11 @@ export default class SobjectCentricView extends MyTriggerViewBase {
         };
     }
 
-    createCellElement(description, className) {
+    createCellElement(description, mdtId) {
         return {
             "label" : description,
-            "key" : className,
+            "key" : mdtId,
+			"id" : mdtId,
             "size" : 2
         };
     }

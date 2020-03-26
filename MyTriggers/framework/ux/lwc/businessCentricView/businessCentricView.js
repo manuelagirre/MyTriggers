@@ -93,28 +93,36 @@ export default class BusinessCentricView extends MyTriggerViewBase {
         }
 
         var table = this.template.querySelector('c-table-component');
+		console.log(tableCells);
         table.update(headers, tableCells);
     }
 
     mapTheData(mdtDataAsList, filter) {
         var mdtData = mdtDataAsList;
         var mapped = [];
-
+		//console.log(103);
         for (var mdtIndexer = 0; mdtIndexer < mdtData.length; mdtIndexer++) {
-            var mdtRow = mdtData[mdtIndexer];
-            var clasName = mdtRow.Class__c;
-            var triggerEventDML = mdtRow.Event__c.split('_')[1];
-            var triggerEventTime = mdtRow.Event__c.split('_')[0];
-            var sobject = (
+		
+            let mdtRow = mdtData[mdtIndexer];
+			//console.log(JSON.stringify(mdtRow));
+		
+			let mdtId = mdtRow.Id;
+            let clasName = mdtRow.Class__c;
+            let triggerEventDML = mdtRow.Event__c.split('_')[1];
+            let triggerEventTime = mdtRow.Event__c.split('_')[0];
+            let sobject = (
 				mdtRow.sObject__c === null || mdtRow.sObject__c === "" || mdtRow.sObject__c === undefined 
 					? mdtRow.sObjectAPIName__c 
 					: mdtRow.sObject__c
 			);
-
+			
             var eventDMLOrderNumber = this.possibleDMLs.indexOf(triggerEventDML);
             var eventTimingOrderNumber = this.possibleTimings.indexOf(triggerEventTime);
-
+			
+			//console.log(clasName + ' ' + filter.classValue);
             if (clasName === filter.classValue) {
+				
+				//console.log(triggerEventDML + ' ' + filter.crudValue);
                 if (filter.crudValue.includes(triggerEventDML)) {
 
                     var grandParent = mapped[eventDMLOrderNumber];
@@ -123,6 +131,7 @@ export default class BusinessCentricView extends MyTriggerViewBase {
                         grandParent = mapped[eventDMLOrderNumber];
                     }
 
+					//console.log(triggerEventTime + ' ' + filter.timingValue);
                     if (filter.timingValue.includes(triggerEventTime)) {
 
                         var parent = grandParent.rows[eventTimingOrderNumber];
@@ -131,16 +140,45 @@ export default class BusinessCentricView extends MyTriggerViewBase {
                             parent = grandParent.rows[eventTimingOrderNumber];
                         }
 
+						//console.log(sobject + ' ' + filter.sobjectsValues);
                         parent.elements[filter.sobjectsValues.indexOf(sobject)] = 
-                            this.createCellElement(mdtRow.Description__c, filter.sobjectsValues.indexOf(sobject));
+                            this.createCellElement(mdtRow.Description__c, mdtId);
 
                     }
 
                 }
             }
-            
+            //console.log(mapped);
         }
+		//console.log(146);
+		//console.log(mapped);
+		var possibleOrderNumbers = this.collectAndSortPossibleOrderNumbers(mdtData);
 
+		for (var dmlIndex = 0; dmlIndex < mapped.length; dmlIndex++) {
+            var dmlElement = mapped[dmlIndex];
+            //console.log("dml " + dmlIndex);
+			//console.log(dmlElement)
+            if (dmlElement != undefined) {
+				
+                for (var timingIndex = 0; timingIndex < dmlElement.rows.length; timingIndex++){
+                    var timingElement = dmlElement.rows[timingIndex];
+					//console.log("time " + timingIndex);
+					//console.log(timingElement);
+                    if (timingElement != undefined) {
+                        for (var rowy = 0; rowy < filter.sobjectsValues.length; rowy++) {
+                            var rowElement = timingElement.elements[rowy];
+							if (rowElement == undefined) {
+								timingElement.elements[rowy] = this.createCellElement("", "-1");
+							}
+							//console.log("rows " + rowy);
+							//console.log(rowElement);
+                        }
+                    }
+                }
+            }
+        }
+		//console.log(187);
+		//console.log(mapped);
         return mapped;
     }
 
@@ -165,6 +203,7 @@ export default class BusinessCentricView extends MyTriggerViewBase {
         return {
             "label" : description,
             "key" : key,
+			"id" : key,
             "size" : 2
         };
     }

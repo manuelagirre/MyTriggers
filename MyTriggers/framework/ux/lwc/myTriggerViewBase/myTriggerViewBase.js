@@ -125,7 +125,6 @@ export default class MyTriggerViewBase extends LightningElement {
         for (var mdtIndexer = 0; mdtIndexer < mdtData.length; mdtIndexer++) {
             var mdtRow = mdtData[mdtIndexer];
             var orderNumber = mdtRow.Order__c;
-            ////console.log(orderNumber);
             if (!possibleOrderNumbers.includes(orderNumber)) {
                 possibleOrderNumbers.push(orderNumber);
             }

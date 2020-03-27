@@ -6,11 +6,14 @@
                     onokclick={handleOkClick}>
         <c-metadata-edit-form record={currentRecord} onmetadatachange={handleMetadataChange}></c-metadata-edit-form>
     </c-modal-window>
-
+    
     <lightning-tabset variant="scoped">
 
         <lightning-tab label="Business-centric">
-            <c-business-centric-view custom-metadata={mdtFromApex} oncelldblclick={handleCellDblClick}> </c-business-centric-view>
+            <c-business-centric-view custom-metadata={mdt} 
+                                     oncelldblclick={handleCellDblClick}
+                                     onsavechangedclick={handleSaveChangedClick}>
+            </c-business-centric-view>
         </lightning-tab>
 
         <lightning-tab label="Sobject-centric">
@@ -20,6 +23,7 @@
         <lightning-tab label="Event-centric">
             <c-event-centric-view custom-metadata={mdtFromApex}></c-event-centric-view>
         </lightning-tab>
-
     </lightning-tabset>
+
+    
 </template>

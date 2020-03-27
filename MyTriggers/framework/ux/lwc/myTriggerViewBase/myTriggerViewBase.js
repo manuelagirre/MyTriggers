@@ -9,7 +9,7 @@ export default class MyTriggerViewBase extends LightningElement {
     /*@api
     customMetadata;*/
 
-    
+    initialized = false;
 
     @track options = {};
 
@@ -107,7 +107,10 @@ export default class MyTriggerViewBase extends LightningElement {
             "optionClass" : optionsClasses
         };
 
-        //console.log(result);
+		console.log("MyTriggerViewBase@calculateOptions");
+        console.log(result);
+
+		this.initialized = true;
 
         return result;
     }

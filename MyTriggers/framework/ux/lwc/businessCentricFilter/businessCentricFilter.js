@@ -12,12 +12,14 @@ export default class BusinessCentricFilter extends LightningElement {
 
     @track filterOptions = {"optionTiming" : [], "optionDml":[],"optionClass":[],"optionSobject":[]};
     
+	initialized = false;
+
     @api
     set options(value) {
         //console.log("BusinessCentricFilter set selected");
         //console.log(JSON.stringify(value));
         this.filterOptions = value;
-        if (value.optionTiming) {
+        if (value.optionTiming  && !this.initialized) {
             this.setupDefaultValues();
         }
     }
@@ -27,13 +29,16 @@ export default class BusinessCentricFilter extends LightningElement {
     }
 
     setupDefaultValues(){
-        //console.log("BusinessCentricFilter setupDefaultValues");
+        console.log("BusinessCentricFilter setupDefaultValues");
+		this.valueBA = [];
         for (let i = 0; i < this.filterOptions.optionTiming.length; i++) {
             this.valueBA.push(this.filterOptions.optionTiming[i].value);
         }
+		this.valueCRUD = [];
         for (let i = 0; i < this.filterOptions.optionDml.length; i++) {
             this.valueCRUD.push(this.filterOptions.optionDml[i].value);
         }
+		this.valueSobjects = [];
         for (let i = 0; i < this.filterOptions.optionSobject.length; i++) {
             this.valueSobjects.push(this.filterOptions.optionSobject[i].value);
         }
@@ -47,6 +52,7 @@ export default class BusinessCentricFilter extends LightningElement {
         //console.log(JSON.stringify(this.classValue));
 
         //this.dispatchFilterChange();
+		this.initialized = true;
     }
 
     get optionsBA() {

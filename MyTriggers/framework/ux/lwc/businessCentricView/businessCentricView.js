@@ -8,13 +8,19 @@ export default class BusinessCentricView extends MyTriggerViewBase {
 
     @track metadata = [];
 
+	isAnyChanged = false;
+
     @api
     set customMetadata(value) {
         if (value.data) {
 			console.log("BusinessCentricView customMetadata " + JSON.stringify(value.data));
             this.metadata = value.data;
-            this.options = this.calculateOptions();
-            this.currentFilter = this.calculateDefaultFilter();
+			if (!this.initialized) {
+				this.options = this.calculateOptions();
+				this.currentFilter = this.calculateDefaultFilter();
+			}
+			
+			
         }
     }
 
@@ -97,7 +103,17 @@ export default class BusinessCentricView extends MyTriggerViewBase {
         table.update(headers, tableCells);
     }
 
+	handleSaveChanges(event) {
+		console.log("BusinessCentricView@handleSaveChanges");
+		this.dispatchEvent(
+            new CustomEvent(
+                'savechangedclick'
+            )
+        );
+	}
+
     mapTheData(mdtDataAsList, filter) {
+		console.log("mapTheData");
         var mdtData = mdtDataAsList;
         var mapped = [];
 		//console.log(103);
@@ -105,7 +121,7 @@ export default class BusinessCentricView extends MyTriggerViewBase {
 		
             let mdtRow = mdtData[mdtIndexer];
 			//console.log(JSON.stringify(mdtRow));
-		
+			this.isAnyChanged = this.isAnyChanged || mdtRow.isChanged;
 			let mdtId = mdtRow.Id;
             let clasName = mdtRow.Class__c;
             let triggerEventDML = mdtRow.Event__c.split('_')[1];
@@ -142,7 +158,7 @@ export default class BusinessCentricView extends MyTriggerViewBase {
 
 						//console.log(sobject + ' ' + filter.sobjectsValues);
                         parent.elements[filter.sobjectsValues.indexOf(sobject)] = 
-                            this.createCellElement(mdtRow.Description__c, mdtId);
+                            this.createCellElement(mdtRow);
 
                     }
 
@@ -199,11 +215,12 @@ export default class BusinessCentricView extends MyTriggerViewBase {
         };
     }
 
-    createCellElement(description, key) {
+    createCellElement(mdtRow) {
         return {
-            "label" : description,
-            "key" : key,
-			"id" : key,
+            "label" : mdtRow.Description__c,
+            "key" : mdtRow.Id,
+			"id" : mdtRow.Id,
+			"isChanged" : mdtRow.isChanged,
             "size" : 2
         };
     }

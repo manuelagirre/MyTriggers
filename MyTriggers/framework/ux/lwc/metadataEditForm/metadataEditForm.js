@@ -27,4 +27,19 @@ export default class MetadataEditForm extends LightningElement {
             )
         );
 	}
+
+	handleChangeDescription(event) {
+		let rec = JSON.parse(JSON.stringify(this.currentRecord));
+		rec.Description__c = event.detail.value;
+		this.dispatchEvent(
+			new CustomEvent(
+				'metadatachange', 
+				{ 
+					detail: rec,
+					bubbles: true,
+					composed: true
+				}
+			)
+		);
+	}
 }

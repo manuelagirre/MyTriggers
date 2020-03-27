@@ -19,6 +19,7 @@ export default class TogglePicklist extends LightningElement {
         //console.log("TogglePicklist set options");
         //console.log(JSON.stringify(value));
         if (value != null) {
+			this._options = [];
             for (let i = 0; i < value.length; i++) {
                 //console.log(value[i].value);
                 this._options.push( {"value" : value[i].value, "label" : value[i].label, "isSelected" : true});

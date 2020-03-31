@@ -15,29 +15,34 @@
             <lightning-input type="text" 
                              label="MyTrigger Setting Name" 
                              class="slds-m-around_medium"
-                             value={record.DeveloperName}></lightning-input>
+                             value={record.DeveloperName} 
+                             disabled></lightning-input>
         </lightning-layout-item>
 
         <lightning-layout-item size="6">
             <lightning-input type="checkbox" 
                              label="Active" 
                              class="slds-m-around_medium"
-                             value={record.Active__c}></lightning-input>
+                             checked={record.Active__c}
+                             onchange={handleChangeActive}></lightning-input>
         </lightning-layout-item>
 
         <lightning-layout-item size="6">
             <lightning-input type="checkbox" 
                              label="Allow Bypass" 
                              class="slds-m-around_medium"
-                             value={record.IsBypassAllowed__c}></lightning-input>
+                             checked={record.IsBypassAllowed__c}
+                             onchange={handleChangeBypassAllowed}></lightning-input>
         </lightning-layout-item>
 
         <lightning-layout-item size="6">
             <lightning-combobox name="progress" 
                                 label="sObject"
                                 placeholder="sObject" 
-                                class="slds-m-around_medium"
-                                value={record.sObject__c}></lightning-combobox>
+                                class="slds-m-around_medium" 
+                                options={sobjectOptions}
+                                value={record.sObject__c}
+                                onchange={handleChangeSobject}></lightning-combobox>
         </lightning-layout-item>
 
         <lightning-layout-item size="6">
@@ -45,35 +50,41 @@
                                 label="Event"
                                 placeholder="Event" 
                                 class="slds-m-around_medium"
-                                value={record.Class__c}></lightning-combobox>
+                                options={eventOptions}
+                                value={record.Event__c}
+                                onchange={handleChangeEvent}></lightning-combobox>
         </lightning-layout-item>
 
         <lightning-layout-item size="6">
             <lightning-input type="text" 
                              label="sObject Override" 
                              class="slds-m-around_medium"
-                             value={record.sObjectAPIName__c}></lightning-input>
+                             value={record.sObjectAPIName__c}
+                             onchange={handleChangeSobjectOverride}></lightning-input>
         </lightning-layout-item>
 
         <lightning-layout-item size="6">
             <lightning-input type="number" 
                              label="Order" 
                              class="slds-m-around_medium"
-                             value={record.Order__c}></lightning-input>
+                             value={record.Order__c}
+                             onchange={handleChangeOrder}></lightning-input>
         </lightning-layout-item>
 
         <lightning-layout-item size="6">
             <lightning-input type="text" 
                              label="Class Namespace Prefix" 
                              class="slds-m-around_medium"
-                             value={record.ClassNamespacePrefix__c}></lightning-input>
+                             value={record.ClassNamespacePrefix__c}
+                             onchange={handleChangeClassNamespace}></lightning-input>
         </lightning-layout-item>
 
         <lightning-layout-item size="6">
             <lightning-input type="text" 
                              label="Class" 
                              class="slds-m-around_medium"
-                             value={record.Class__c}></lightning-input>
+                             value={record.Class__c}
+                             onchange={handleChangeClass}></lightning-input>
         </lightning-layout-item>
 
         <lightning-layout-item size="12">

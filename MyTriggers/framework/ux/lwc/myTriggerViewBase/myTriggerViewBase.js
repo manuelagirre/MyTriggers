@@ -18,7 +18,7 @@ export default class MyTriggerViewBase extends LightningElement {
     
 
     get filterOptions() {
-        //console.log("MyTriggerViewBase get filterOptions");
+        console.log("MyTriggerViewBase get filterOptions");
         return this.options;
     }
 

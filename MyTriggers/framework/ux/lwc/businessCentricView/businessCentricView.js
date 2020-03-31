@@ -12,11 +12,14 @@ export default class BusinessCentricView extends MyTriggerViewBase {
 
     @api
     set customMetadata(value) {
+		console.log("BusinessCentricView set customMetadata");
         if (value.data) {
 			console.log("BusinessCentricView customMetadata " + JSON.stringify(value.data));
             this.metadata = value.data;
 			if (!this.initialized) {
+			    console.log("BusinessCentricView customMetadata -> calculateOptions");
 				this.options = this.calculateOptions();
+				console.log("BusinessCentricView customMetadata -> calculateDefaultFilter");
 				this.currentFilter = this.calculateDefaultFilter();
 			}
 			
@@ -113,10 +116,11 @@ export default class BusinessCentricView extends MyTriggerViewBase {
 	}
 
     mapTheData(mdtDataAsList, filter) {
-		console.log("mapTheData");
+		console.log("BusinessCentricView mapTheData");
         var mdtData = mdtDataAsList;
         var mapped = [];
 		//console.log(103);
+		this.isAnyChanged = false;
         for (var mdtIndexer = 0; mdtIndexer < mdtData.length; mdtIndexer++) {
 		
             let mdtRow = mdtData[mdtIndexer];

@@ -4,7 +4,11 @@
                     footer-buttons={modalButtons}
                     width="slds-modal_medium"
                     onokclick={handleOkClick}>
-        <c-metadata-edit-form record={currentRecord} onmetadatachange={handleMetadataChange}></c-metadata-edit-form>
+        <c-metadata-edit-form record={currentRecord} 
+                              onmetadatachange={handleMetadataChange}
+                              sobject-options={sobjectOptions}>
+
+        </c-metadata-edit-form>
     </c-modal-window>
     
     <lightning-tabset variant="scoped">

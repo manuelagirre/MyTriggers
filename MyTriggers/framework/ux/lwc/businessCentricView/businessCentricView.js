@@ -13,17 +13,16 @@ export default class BusinessCentricView extends MyTriggerViewBase {
     @api
     set customMetadata(value) {
 		console.log("BusinessCentricView set customMetadata");
+
         if (value.data) {
 			console.log("BusinessCentricView customMetadata " + JSON.stringify(value.data));
             this.metadata = value.data;
+			this.options = this.calculateOptions();
 			if (!this.initialized) {
-			    console.log("BusinessCentricView customMetadata -> calculateOptions");
-				this.options = this.calculateOptions();
 				console.log("BusinessCentricView customMetadata -> calculateDefaultFilter");
 				this.currentFilter = this.calculateDefaultFilter();
+				this.initialized = true;
 			}
-			
-			
         }
     }
 
@@ -32,16 +31,20 @@ export default class BusinessCentricView extends MyTriggerViewBase {
     }
 
     get rows(){
+		console.log("BusinessCentricView get rows");
         let mapped = this.mapTheData(this.metadata, this.currentFilter);
-
+		console.log("BusinessCentricView get rows after mapTheData");
+		console.log(mapped);
         let tableCells = [];
         for (var index = 0; index < mapped.length; index++) {
+			console.log(mapped[index]);
             tableCells.push(mapped[index]);
         }
         return tableCells;
     }
 
     get headers() {
+		console.log("BusinessCentricView get headers");
         let headers = [];
         //let filterOpt = this.filterOptions;
         if (this.currentFilter.sobjectsValues) {
@@ -95,7 +98,7 @@ export default class BusinessCentricView extends MyTriggerViewBase {
         }
         console.log(headers);
         var mapped = this.mapTheData(this.metadata, filter);
-
+		console.log(97);
         var tableCells = [];
         for (var index = 0; index < mapped.length; index++) {
             tableCells.push(mapped[index]);
@@ -103,7 +106,9 @@ export default class BusinessCentricView extends MyTriggerViewBase {
 
         var table = this.template.querySelector('c-table-component');
 		console.log(tableCells);
+		console.log("before update table");
         table.update(headers, tableCells);
+		console.log("after update table");
     }
 
 	handleSaveChanges(event) {
@@ -119,15 +124,15 @@ export default class BusinessCentricView extends MyTriggerViewBase {
 		console.log("BusinessCentricView mapTheData");
         var mdtData = mdtDataAsList;
         var mapped = [];
-		//console.log(103);
+		console.log(121);
 		this.isAnyChanged = false;
         for (var mdtIndexer = 0; mdtIndexer < mdtData.length; mdtIndexer++) {
 		
             let mdtRow = mdtData[mdtIndexer];
-			//console.log(JSON.stringify(mdtRow));
+			console.log(JSON.stringify(mdtRow));
 			this.isAnyChanged = this.isAnyChanged || mdtRow.isChanged;
 			let mdtId = mdtRow.Id;
-            let clasName = mdtRow.Class__c;
+            let clasName = (mdtRow.ClassNamespacePrefix__c ? mdtRow.ClassNamespacePrefix__c + "." : "") + mdtRow.Class__c;
             let triggerEventDML = mdtRow.Event__c.split('_')[1];
             let triggerEventTime = mdtRow.Event__c.split('_')[0];
             let sobject = (
@@ -170,7 +175,7 @@ export default class BusinessCentricView extends MyTriggerViewBase {
             }
             //console.log(mapped);
         }
-		//console.log(146);
+		console.log(172);
 		//console.log(mapped);
 		var possibleOrderNumbers = this.collectAndSortPossibleOrderNumbers(mdtData);
 
@@ -183,22 +188,22 @@ export default class BusinessCentricView extends MyTriggerViewBase {
                 for (var timingIndex = 0; timingIndex < dmlElement.rows.length; timingIndex++){
                     var timingElement = dmlElement.rows[timingIndex];
 					//console.log("time " + timingIndex);
-					//console.log(timingElement);
+					console.log(timingElement);
                     if (timingElement != undefined) {
                         for (var rowy = 0; rowy < filter.sobjectsValues.length; rowy++) {
                             var rowElement = timingElement.elements[rowy];
 							if (rowElement == undefined) {
-								timingElement.elements[rowy] = this.createCellElement("", "-1");
+								timingElement.elements[rowy] = this.createBlankCellElement("", "-1");
 							}
-							//console.log("rows " + rowy);
-							//console.log(rowElement);
+							console.log("rows " + rowy);
+							console.log(timingElement.elements[rowy]);
                         }
                     }
                 }
             }
         }
-		//console.log(187);
-		//console.log(mapped);
+		console.log(199);
+		console.log(mapped);
         return mapped;
     }
 
@@ -228,4 +233,11 @@ export default class BusinessCentricView extends MyTriggerViewBase {
             "size" : 2
         };
     }
+	createBlankCellElement(descript, key) {
+		return {
+            "label" : descript,
+            "key" : key,
+            "size" : 2
+        };
+	}
 }

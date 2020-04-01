@@ -8,12 +8,21 @@ export default class EventCentricView extends MyTriggerViewBase {
 
     @track metadata = [];
 
+	isAnyChanged = false;
+
     @api
     set customMetadata(value) {
+		console.log("EventCentricView set customMetadata");
+
         if (value.data) {
+			console.log("EventCentricView customMetadata " + JSON.stringify(value.data));
             this.metadata = value.data;
             this.options = this.calculateOptions();
-            this.currentFilter = this.calculateDefaultFilter();
+			if (!this.initialized) {
+				console.log("EventCentricView customMetadata -> calculateDefaultFilter");
+				this.currentFilter = this.calculateDefaultFilter();
+				this.initialized = true;
+			}
         }
     }
 
@@ -89,16 +98,27 @@ export default class EventCentricView extends MyTriggerViewBase {
         table.update(headers, tableCells);
     }
 
+	handleSaveChanges(event) {
+		console.log("EventCentricView@handleSaveChanges");
+		this.dispatchEvent(
+            new CustomEvent(
+                'savechangedclick'
+            )
+        );
+	}
+
     mapTheData(mdtDataAsList, filter) {
         var mdtData = mdtDataAsList;
         var mapped = [];
         
         var possibleOrderNumbers = this.collectAndSortPossibleOrderNumbers(mdtData);
         if (filter.classValue) {
+			this.isAnyChanged = false;
             for (var mdtIndexer = 0; mdtIndexer < mdtData.length; mdtIndexer++) {
                 let mdtRow = mdtData[mdtIndexer];
+				this.isAnyChanged = this.isAnyChanged || mdtRow.isChanged;
 				let mdtId = mdtRow.Id;
-                let clasName = mdtRow.Class__c;
+                let clasName = (mdtRow.ClassNamespacePrefix__c ? mdtRow.ClassNamespacePrefix__c + "." : "") + mdtRow.Class__c;
                 let triggerEventDML = mdtRow.Event__c.split('_')[1];
                 let triggerEventTime = mdtRow.Event__c.split('_')[0];
                 let sobject = (
@@ -129,11 +149,24 @@ export default class EventCentricView extends MyTriggerViewBase {
                             var rowElement = tablePiece.elements[rowIndex];
                             var colIndex = filter.sobjectsValues.indexOf(sobject) + 1;
 
-                            rowElement.elements[colIndex] = this.createCellElement(mdtId, mdtRow.Description__c);
+                            rowElement.elements[colIndex] = this.createCellElement(mdtRow);
                         }
                     }
                 }
             }
+			console.log(mapped);
+			for (let timingIndex = 0; timingIndex < mapped.length; timingIndex++) {
+				let timingItem = mapped[timingIndex];
+				console.log(timingItem);
+				for (let dmlIndex = 0; dmlIndex < timingItem.rows.length; dmlIndex++) {
+					let dmlItem = timingItem.rows[dmlIndex];
+					console.log(dmlItem);
+					for (let rowIndex = 0; rowIndex < dmlItem.elements.length; rowIndex++) {
+						let rowElement = dmlItem.elements[rowIndex];
+						console.log(rowElement);
+					}
+				}
+			}
         }
         return mapped;
     }
@@ -156,7 +189,7 @@ export default class EventCentricView extends MyTriggerViewBase {
     createRowElement(rowIndex,orderNumber,sobjectValues) {
         var elements = [{"key":"0","label":orderNumber,"size" : 1}];
         for (var i = 0; i < sobjectValues.length; i++) {
-            elements.push({"key":(i+1), "label":""});
+            elements.push({"key":(i+1), "label":"","size" : 2});
         }
         return {
             "key" : rowIndex,
@@ -164,13 +197,24 @@ export default class EventCentricView extends MyTriggerViewBase {
         };
     }
 
-    createCellElement(colIndex, description) {
+    createCellElement(mdtRow) {
         return {
-            "key" : colIndex,
-			"id" : colIndex,
-            "label" : description,
+            "key" : mdtRow.Id,
+			"id" : mdtRow.Id,
+            "label" : mdtRow.Description__c,
+			"isChanged" : mdtRow.isChanged,
             "size" : 2
         };
     }
+
+	createBlankCellElement(colIndex) {
+		return {
+            "key" : colIndex,
+			"id" : colIndex,
+            "label" : "&nbsp;",
+			"isChanged" : false,
+            "size" : 2
+        };
+	}
 
 }

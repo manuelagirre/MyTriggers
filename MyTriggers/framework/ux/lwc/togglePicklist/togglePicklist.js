@@ -16,12 +16,13 @@ export default class TogglePicklist extends LightningElement {
 
     @api
     set options(value) {
-        //console.log("TogglePicklist set options");
-        //console.log(JSON.stringify(value));
+        console.log("TogglePicklist set options");
+        console.log(JSON.stringify(value));
         if (value != null) {
 			this._options = [];
+			this.value = [];
             for (let i = 0; i < value.length; i++) {
-                //console.log(value[i].value);
+                console.log(value[i].value);
                 this._options.push( {"value" : value[i].value, "label" : value[i].label, "isSelected" : true});
                 this.value.push(value[i].value);
             }
@@ -29,7 +30,7 @@ export default class TogglePicklist extends LightningElement {
             /*let lightningButtons = this.querySelectorAll("lightning-button");
             //console.log(lightningButtons.length);*/
         }
-        //console.log(JSON.stringify(this._options));
+        console.log(JSON.stringify(this._options));
     }
 
     get options() {
@@ -38,7 +39,8 @@ export default class TogglePicklist extends LightningElement {
 
     handleToggleChange(event) {
         console.log("TogglePicklist handleToggleChange");
-
+		console.log(event.detail.value);
+		console.log(this.value);
         let valIndex = this.value.indexOf(event.detail.value);
         if (valIndex >= 0) {
             this.value.splice(valIndex, 1);
@@ -46,7 +48,7 @@ export default class TogglePicklist extends LightningElement {
             this.value.push(event.detail.value);
         }
 
-        //console.log(this.value);
+        console.log(this.value);
         this.dispatchPicklistChange();
     }
 

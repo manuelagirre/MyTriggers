@@ -17,11 +17,26 @@ export default class BusinessCentricFilter extends LightningElement {
     @api
     set options(value) {
         console.log("BusinessCentricFilter set options");
-        //console.log(JSON.stringify(value));
+        console.log(JSON.stringify(value));
+		console.log(JSON.stringify(this.filterOptions.optionClass));
+		
+		let isChanged = false;
+		if (this.filterOptions.optionClass) {
+			isChanged = this.isAnyChanged(value);
+		}
+
         this.filterOptions = value;
         if (value.optionTiming  && !this.initialized) {
             this.setupDefaultValues();
+			this.initialized = true;
         }
+
+		console.log("isChanged " + isChanged);
+		if (isChanged && this.initialized) {
+			console.log("this.isAnyChanged");
+			this.setupDefaultValues();
+			this.dispatchFilterChange();
+		}
     }
 
     get options(){
@@ -33,7 +48,7 @@ export default class BusinessCentricFilter extends LightningElement {
         console.log("BusinessCentricFilter setupDefaultValues");
 		this.valueBA = [];
         for (let i = 0; i < this.filterOptions.optionTiming.length; i++) {
-			console.log("35 " + this.filterOptions.optionTiming[i]);
+			//console.log("35 " + this.filterOptions.optionTiming[i]);
             this.valueBA.push(this.filterOptions.optionTiming[i].value);
         }
 		this.valueCRUD = [];
@@ -54,8 +69,26 @@ export default class BusinessCentricFilter extends LightningElement {
         //console.log(JSON.stringify(this.classValue));
 
         //this.dispatchFilterChange();
-		this.initialized = true;
+		//this.initialized = true;
     }
+
+	isAnyChanged(newOptions) {
+		console.log("@isAnyChanged");
+		
+		if (JSON.stringify(this.filterOptions.optionTiming) !== JSON.stringify(newOptions.optionTiming)) {
+			return true;
+		}
+		if (JSON.stringify(this.filterOptions.optionDml) !== JSON.stringify(newOptions.optionDml)) {
+			return true;
+		}
+		if (JSON.stringify(this.filterOptions.optionSobject) !== JSON.stringify(newOptions.optionSobject)) {
+			return true;
+		}
+		if (JSON.stringify(this.filterOptions.optionClass) !== JSON.stringify(newOptions.optionClass)) {
+			return true;
+		}
+		return false;
+	}
 
     get optionsBA() {
         return this.filterOptions.optionTiming;

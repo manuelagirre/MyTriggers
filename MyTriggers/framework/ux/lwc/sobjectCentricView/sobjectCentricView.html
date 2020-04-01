@@ -15,6 +15,25 @@
 
                 </c-table-component>
             </div>
+
+            <div class="slds-border_top slds-p-top_small slds-p-left_small">
+                <template if:true={isAnyChanged}>
+                    <lightning-button variant="brand" 
+                                  label="Save Changes" 
+                                  title="Save Changes" 
+                                  onclick={handleSaveChanges}>
+                        </lightning-button>
+                </template>
+                
+                <template if:false={isAnyChanged}>
+                    <lightning-button variant="brand" 
+                                  label="Save Changes" 
+                                  title="Save Changes" 
+                                  disabled>
+                        </lightning-button>
+                </template>
+                
+            </div>
         </lightning-layout-item>
     </lightning-layout>
     

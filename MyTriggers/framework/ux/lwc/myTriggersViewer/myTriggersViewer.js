@@ -69,13 +69,16 @@ export default class MyTriggersViewer extends LightningElement {
 		if (this.currentData) {
 			console.log("should not refreshData");
 			console.log(this.currentData);
-			for (let index = 0; index < this.currentData.data.length; index++) {
-				let mdtRow = this.currentData.data[index];
-				console.log(mdtRow);
-				if (this.changedData.get(mdtRow.Id)) {
-					this.currentData.data[index].isChanged = true;
-				} else {
-					this.currentData.data[index].isChanged = false;
+			console.log(this.currentData.data);
+			if (this.currentData.data){
+				for (let index = 0; index < this.currentData.data.length; index++) {
+					let mdtRow = this.currentData.data[index];
+					console.log(mdtRow);
+					if (this.changedData.get(mdtRow.Id)) {
+						this.currentData.data[index].isChanged = true;
+					} else {
+						this.currentData.data[index].isChanged = false;
+					}
 				}
 			}
 		} else {
@@ -83,20 +86,6 @@ export default class MyTriggersViewer extends LightningElement {
 			this.currentData = {};
 			this.refreshData();
 		}
-		/*if (this.mdtFromApex.data) {
-			for (let index = 0; index < fromApex.data.length; index++) {
-				let mdtRow = fromApex.data[index];
-				if (this.changedData.get(mdtRow.Id)) {
-					fromApex.data[index].isChanged = true;
-				} else {
-					fromApex.data[index].isChanged = false;
-				}
-			}
-			console.log(JSON.stringify(fromApex));
-			return fromApex;
-		} else {
-			return this.mdtFromApex;
-		}*/
 		console.log(this.currentData);
 		return this.currentData;
 	}
@@ -128,6 +117,8 @@ export default class MyTriggersViewer extends LightningElement {
 	handleOkClick(event) {
 		console.log("MyTriggersViewer@handleOkClick");
 		if (this.currentRecordChanged != null) {
+			delete this.currentRecordChanged.isChanged;
+			delete this.currentRecordChanged.sObject__r;
 			this.changedData.set(this.currentRecordChanged.Id, this.currentRecordChanged);
 		}
 		this._currentRecord = null;

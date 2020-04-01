@@ -13,11 +13,26 @@ export default class EventCentricFilter extends LightningElement {
 
     @api
     set options(value) {
-        //console.log("EventCentricFilter set options");
+        console.log("EventCentricFilter set options");
+		console.log(JSON.stringify(value));
+		console.log(JSON.stringify(this.filterOptions.optionClass));
+
+		let isChanged = false;
+		if (this.filterOptions.optionClass) {
+			isChanged = this.isAnyChanged(value);
+		}
+
         this.filterOptions = value;
-        if (value.optionTiming) {
+        if (value.optionTiming  && !this.initialized) {
             this.setupDefaultValues();
-        }
+			this.initialized = true;
+        } else
+
+		if (isChanged && this.initialized) {
+			console.log("this.isAnyChanged");
+			this.setupDefaultValues();
+			this.dispatchFilterChange();
+		}
     }
 
     get options() {
@@ -32,10 +47,12 @@ export default class EventCentricFilter extends LightningElement {
 
         this.valueCRUD = this.filterOptions.optionDml[0].value;
 
+		this.valueSobjects = [];
         for (let i = 0; i < this.filterOptions.optionSobject.length; i++) {
             this.valueSobjects.push(this.filterOptions.optionSobject[i].value);
         }
 
+		this.valueClasses = [];
         for (let i = 0; i < this.filterOptions.optionClass.length; i++) {
             this.valueClasses.push(this.filterOptions.optionClass[i].value);
         }
@@ -47,6 +64,24 @@ export default class EventCentricFilter extends LightningElement {
 
         //this.dispatchFilterChange();
     }
+
+	isAnyChanged(newOptions) {
+		console.log("@isAnyChanged");
+		
+		if (JSON.stringify(this.filterOptions.optionTiming) !== JSON.stringify(newOptions.optionTiming)) {
+			return true;
+		}
+		if (JSON.stringify(this.filterOptions.optionDml) !== JSON.stringify(newOptions.optionDml)) {
+			return true;
+		}
+		if (JSON.stringify(this.filterOptions.optionSobject) !== JSON.stringify(newOptions.optionSobject)) {
+			return true;
+		}
+		if (JSON.stringify(this.filterOptions.optionClass) !== JSON.stringify(newOptions.optionClass)) {
+			return true;
+		}
+		return false;
+	}
 
     get optionsBA() {
         return this.filterOptions.optionTiming;

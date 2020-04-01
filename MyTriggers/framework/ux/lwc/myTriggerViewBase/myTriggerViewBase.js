@@ -52,7 +52,7 @@ export default class MyTriggerViewBase extends LightningElement {
 
             var mdtRow = customMDT[i];
             ////console.log(mdtRow); 
-            var clasName = mdtRow.Class__c;
+            var clasName = (mdtRow.ClassNamespacePrefix__c ? mdtRow.ClassNamespacePrefix__c + "." : "") + mdtRow.Class__c;
             var triggerEventDML = mdtRow.Event__c.split('_')[1];
             var triggerEventTime = mdtRow.Event__c.split('_')[0];
 			console.log("sobject " + mdtRow.sObject__c);
@@ -110,7 +110,7 @@ export default class MyTriggerViewBase extends LightningElement {
 		console.log("MyTriggerViewBase@calculateOptions");
         console.log(result);
 
-		this.initialized = true;
+		//this.initialized = true;
 
         return result;
     }

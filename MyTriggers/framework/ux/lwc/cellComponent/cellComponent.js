@@ -29,16 +29,18 @@ export default class CellComponent extends LightningElement {
 
 	handleDblClickOnCell(event) {
 		console.log("RowComponent@handleDblClickOnCell");
-		this.dispatchEvent(
-            new CustomEvent(
-                'celldblclick', 
-                { 
-                    detail: this.value,
-					bubbles: true,
-					composed: true
-                }
-            )
-        );
+		if (this.value) {
+			this.dispatchEvent(
+				new CustomEvent(
+					'celldblclick', 
+					{ 
+						detail: this.value,
+						bubbles: true,
+						composed: true
+					}
+				)
+			);
+		}
 	}
 
 }

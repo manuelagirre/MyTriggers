@@ -7,6 +7,8 @@ import MyTriggerViewBase from 'c/myTriggerViewBase';
 export default class SobjectCentricView extends MyTriggerViewBase {
     @track metadata = [];
 
+	isAnyChanged = false;
+
     @api
     set customMetadata(value) {
         console.log("SobjectCentricView set customMetadata");
@@ -14,7 +16,10 @@ export default class SobjectCentricView extends MyTriggerViewBase {
         if (value.data) {
             this.metadata = value.data;
             this.options = this.calculateOptions();
-            this.currentFilter = this.calculateDefaultFilter();
+			if (!this.initialized) {
+				this.currentFilter = this.calculateDefaultFilter();
+				this.initialized = true;
+			}
         }
     }
 
@@ -108,6 +113,15 @@ export default class SobjectCentricView extends MyTriggerViewBase {
         table.update(headers, tableCells);
     }
 
+	handleSaveChanges(event) {
+		console.log("SobjectCentricView@handleSaveChanges");
+		this.dispatchEvent(
+            new CustomEvent(
+                'savechangedclick'
+            )
+        );
+	}
+
     mapTheData(mdtDataAsList, filter) {
         console.log('SobjectCentricView mapTheData');
         //console.log(mdtDataAsList);
@@ -122,11 +136,12 @@ export default class SobjectCentricView extends MyTriggerViewBase {
 
         console.log("possibleOrderNumber calculated");
         console.log(possibleOrderNumbers);
-
+		if (this.initialized) this.isAnyChanged = false;
         for (var mdtIndexer = 0; mdtIndexer < mdtData.length; mdtIndexer++) {
             let mdtRow = mdtData[mdtIndexer];
+			this.isAnyChanged = this.isAnyChanged || mdtRow.isChanged;
 			let mdtId = mdtRow.Id;
-            let clasName = mdtRow.Class__c;
+            let clasName = (mdtRow.ClassNamespacePrefix__c ? mdtRow.ClassNamespacePrefix__c + "." : "") + mdtRow.Class__c;
             let triggerEventDML = mdtRow.Event__c.split('_')[1];
             let triggerEventTime = mdtRow.Event__c.split('_')[0];
             let sobject = (
@@ -165,7 +180,7 @@ export default class SobjectCentricView extends MyTriggerViewBase {
 
                             var rowElement = parent.elements[rowIndex];
                             rowElement.elements[filter.classValue.indexOf(clasName)+1] = 
-                                this.createCellElement(mdtRow.Description__c, mdtId);
+                                this.createCellElement(mdtRow);
                         }
 
                     }
@@ -239,11 +254,12 @@ export default class SobjectCentricView extends MyTriggerViewBase {
         };
     }
 
-    createCellElement(description, mdtId) {
+    createCellElement(mdtRow) {
         return {
-            "label" : description,
-            "key" : mdtId,
-			"id" : mdtId,
+            "label" : mdtRow.Description__c,
+            "key" : mdtRow.Id,
+			"id" : mdtRow.Id,
+			"isChanged" : mdtRow.isChanged,
             "size" : 2
         };
     }

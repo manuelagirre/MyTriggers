@@ -6,9 +6,11 @@
 
         <lightning-layout horizontal-align="space" multiple-rows="true">
             <template for:each={options} for:item="item">
-                <lightning-layout-item padding="around-small" key={item.value}>
-                    <c-toggle-picklist-item value={item.value} label={item.label} is-selected={item.isSelected} onchange={handleToggleChange}></c-toggle-picklist-item>
-                </lightning-layout-item>
+                <template if:true={item}>
+                    <lightning-layout-item padding="around-small" key={item.value}>
+                        <c-toggle-picklist-item value={item.value} label={item.label} is-selected={item.isSelected} onchange={handleToggleChange}></c-toggle-picklist-item>
+                    </lightning-layout-item>
+                </template>
             </template>
         </lightning-layout>
         <div class="slds-text-align_right slds-m-around_small">

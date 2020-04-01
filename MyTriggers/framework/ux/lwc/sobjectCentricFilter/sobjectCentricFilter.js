@@ -11,12 +11,31 @@ export default class SobjectCentricFilter extends LightningElement {
 
     @track filterOptions = {"optionTiming" : [], "optionDml":[],"optionClass":[],"optionSobject":[]};
 
+	initialized = false;
+
     @api
     set options(value) {
+		console.log("SobjectCentricFilter set options");
+        console.log(JSON.stringify(value));
+		console.log(JSON.stringify(this.filterOptions.optionClass));
+
+		let isChanged = false;
+		if (this.filterOptions.optionClass) {
+			isChanged = this.isAnyChanged(value);
+		}
+
         this.filterOptions = value;
-        if (value.optionTiming) {
+        if (value.optionTiming  && !this.initialized) {
             this.setupDefaultValues();
-        }
+			this.initialized = true;
+        } else
+
+		//console.log("isChanged " + isChanged);
+		if (isChanged && this.initialized) {
+			console.log("this.isAnyChanged");
+			this.setupDefaultValues();
+			this.dispatchFilterChange(); 
+		}
     }
 
     get options(){
@@ -25,12 +44,15 @@ export default class SobjectCentricFilter extends LightningElement {
 
     setupDefaultValues(){
         console.log("SobjectCentricFilter setupDefaultValues");
+		this.valueBA = [];
         for (let i = 0; i < this.filterOptions.optionTiming.length; i++) {
             this.valueBA.push(this.filterOptions.optionTiming[i].value);
         }
+		this.valueCRUD = [];
         for (let i = 0; i < this.filterOptions.optionDml.length; i++) {
             this.valueCRUD.push(this.filterOptions.optionDml[i].value);
         }
+		this.classValue = [];
         for (let i = 0; i < this.filterOptions.optionClass.length; i++) {
             this.classValue.push(this.filterOptions.optionClass[i].value);
         }
@@ -43,8 +65,25 @@ export default class SobjectCentricFilter extends LightningElement {
         console.log(JSON.stringify(this.valueSobjects));
         console.log(JSON.stringify(this.classValue));
 
-        //this.dispatchFilterChange();
     }
+
+	isAnyChanged(newOptions) {
+		console.log("@isAnyChanged");
+		
+		if (JSON.stringify(this.filterOptions.optionTiming) !== JSON.stringify(newOptions.optionTiming)) {
+			return true;
+		}
+		if (JSON.stringify(this.filterOptions.optionDml) !== JSON.stringify(newOptions.optionDml)) {
+			return true;
+		}
+		if (JSON.stringify(this.filterOptions.optionSobject) !== JSON.stringify(newOptions.optionSobject)) {
+			return true;
+		}
+		if (JSON.stringify(this.filterOptions.optionClass) !== JSON.stringify(newOptions.optionClass)) {
+			return true;
+		}
+		return false;
+	}
 
     get optionsBA() {
         return this.filterOptions.optionTiming;

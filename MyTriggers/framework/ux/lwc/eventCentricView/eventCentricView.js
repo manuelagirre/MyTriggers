@@ -41,7 +41,7 @@ export default class EventCentricView extends MyTriggerViewBase {
     }
 
     get headers() {
-        let headers = [{"label":"Trigger Order","key":"-1","size" : 1}];
+        let headers = [{"label":"Trigger Order","key":"Trigger_Order","size" : 1}];
         let currentFilt = this.currentFilter;
         if (currentFilt.sobjectsValues) {
             for (let index = 0; index < currentFilt.sobjectsValues.length; index++) {
@@ -78,7 +78,7 @@ export default class EventCentricView extends MyTriggerViewBase {
         var filter = event.detail;
         this.currentFilter = filter;
 
-        let headers = [{"label":"Trigger Order","key":"-1","size" : 1}];
+        let headers = [{"label":"Trigger Order","key":"Trigger_Order","size" : 1}];
         for (var index = 0; index < filter.sobjectsValues.length; index++) {
             headers.push({
                 "label" : filter.sobjectsValues[index],
@@ -187,7 +187,7 @@ export default class EventCentricView extends MyTriggerViewBase {
     }
 
     createRowElement(rowIndex,orderNumber,sobjectValues) {
-        var elements = [{"key":"0","label":orderNumber,"size" : 1}];
+        var elements = [{"key":"key_"+rowIndex,"label":orderNumber,"size" : 1}];
         for (var i = 0; i < sobjectValues.length; i++) {
             elements.push({"key":(i+1), "label":"","size" : 2});
         }

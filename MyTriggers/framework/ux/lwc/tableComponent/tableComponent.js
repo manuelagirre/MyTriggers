@@ -153,13 +153,13 @@ export default class TableComponent extends LightningElement {
 
     @api
     set rows(value) {
-        //console.log("TableComponent set rows");
-        ////console.log(JSON.stringify(value));
+        console.log("TableComponent set rows");
+        console.log(JSON.stringify(value));
         this._rows = value;
     }
 
     get rows(){
-        //console.log("TableComponent get rows");
-        return this._row;
+        console.log("TableComponent get rows");
+        return this._rows;
     }
 }

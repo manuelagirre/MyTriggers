@@ -1,5 +1,9 @@
 <template>
 
+    <template if:true={isDeploying}>
+        <lightning-spinner alternative-text="Loading" size="large"></lightning-spinner>
+    </template>
+
     <c-modal-window title="Update Custom Metadata" 
                     footer-buttons={modalButtons}
                     width="slds-modal_medium"

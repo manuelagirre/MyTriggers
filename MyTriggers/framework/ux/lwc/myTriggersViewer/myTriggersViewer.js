@@ -1,4 +1,5 @@
 import { LightningElement, track, wire } from 'lwc';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import getMDTRowsApex from '@salesforce/apex/MyTriggers.getAllTriggerHandlerSettings';
 import updateMetadata from '@salesforce/apex/CreateUpdateMetadataUtils.updateMdt';
 import checkDeployment from '@salesforce/apex/CreateUpdateMetadataUtils.checkMdt';
@@ -17,6 +18,8 @@ export default class MyTriggersViewer extends LightningElement {
 	changedData = new Map();
 
 	currentDeploymentId;
+
+	isDeploying = false;
 
 	get modalWindow() {
 		return this.template.querySelector("c-modal-window");
@@ -128,7 +131,7 @@ export default class MyTriggersViewer extends LightningElement {
 
 	handleSaveChangedClick(event) {
 		console.log("MyTriggersViewer@handleSaveChangedClick");
-
+		this.isDeploying = true;
 		console.log(this.changedData);
 
 		let toUpdate = [];
@@ -164,10 +167,14 @@ export default class MyTriggersViewer extends LightningElement {
 		).then(
 			result => {
 				if (result.isSuccess && result.isDeployed) {
+					console.log("result.isSuccess && result.isDeployed");
 					console.log(result);
 					this.changedData = new Map();
+					this.isDeploying = false;
+					this.showToast("Success!", "success", "Metadata records successfully deployed!", "dismissable");
 					this.refreshData();
 				} else if (result.isSuccess && !result.isDeployed){
+					console.log("result.isSuccess && !result.isDeployed");
 					setTimeout(
 						() => {
 							this.asyncCheckDeployment();
@@ -175,12 +182,17 @@ export default class MyTriggersViewer extends LightningElement {
 						1000
 					);
 				} else {
+					console.log("!result.isSuccess && !result.isDeployed");
+					this.isDeploying = false;
+					this.showToast("Error!", "error", result.error, "sticky");
 					console.log(result);
 				}
 				
 			}
 		).catch(
 			error => {
+				this.isDeploying = false;
+				this.showToast("Error!", "error", error, "sticky");
 				console.log(error);
 			}
 		);
@@ -198,6 +210,17 @@ export default class MyTriggersViewer extends LightningElement {
 			error => {
 				console.log(error);
 			}
+		);
+	}
+
+	showToast(title, variant, message, mode){
+        this.dispatchEvent(
+			new ShowToastEvent({
+				"title": title,
+				"variant" : variant,
+				"message": message,
+				"mode" : mode
+			})
 		);
 	}
 }

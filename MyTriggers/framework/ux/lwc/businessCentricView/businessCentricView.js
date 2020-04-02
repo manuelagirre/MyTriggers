@@ -35,12 +35,17 @@ export default class BusinessCentricView extends MyTriggerViewBase {
         let mapped = this.mapTheData(this.metadata, this.currentFilter);
 		console.log("BusinessCentricView get rows after mapTheData");
 		console.log(mapped);
-        let tableCells = [];
+        /*let tableCells = [];
         for (var index = 0; index < mapped.length; index++) {
-			console.log(mapped[index]);
-            tableCells.push(mapped[index]);
-        }
-        return tableCells;
+			try {
+			    console.log(mapped[index]);
+				tableCells.push(mapped[index]);
+				console.log("after table cell push");
+			} catch(error) {
+			    console.error(error);
+			}
+        }*/
+        return mapped;
     }
 
     get headers() {
@@ -88,15 +93,15 @@ export default class BusinessCentricView extends MyTriggerViewBase {
         let filter = event.detail;
         this.currentFilter = filter;
 
-        let headers = [];
+        /*let headers = [];
         for (var index = 0; index < this.currentFilter.sobjectsValues.length; index++) {
             headers.push({
                 "label" : filter.sobjectsValues[index],
                 "key" : filter.sobjectsValues[index],
                 "size" : 2
             });
-        }
-        console.log(headers);
+        }*/
+        /*console.log(headers);
         var mapped = this.mapTheData(this.metadata, filter);
 		console.log(97);
         var tableCells = [];
@@ -106,8 +111,8 @@ export default class BusinessCentricView extends MyTriggerViewBase {
 
         var table = this.template.querySelector('c-table-component');
 		console.log(tableCells);
-		console.log("before update table");
-        table.update(headers, tableCells);
+		console.log("before update table");*/
+        //table.update(headers, tableCells);
 		console.log("after update table");
     }
 
@@ -193,7 +198,7 @@ export default class BusinessCentricView extends MyTriggerViewBase {
                         for (var rowy = 0; rowy < filter.sobjectsValues.length; rowy++) {
                             var rowElement = timingElement.elements[rowy];
 							if (rowElement == undefined) {
-								timingElement.elements[rowy] = this.createBlankCellElement("", "-1");
+								timingElement.elements[rowy] = this.createBlankCellElement("", "key_"+timingIndex+"_"+rowy);
 							}
 							console.log("rows " + rowy);
 							console.log(timingElement.elements[rowy]);

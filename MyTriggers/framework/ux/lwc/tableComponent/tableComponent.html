@@ -22,7 +22,7 @@
             <!-- Data row -->
         <lightning-layout-item size="12">
 
-            <template for:each={_rows} for:item="triggerDml">
+            <template for:each={rows} for:item="triggerDml">
                 <template if:true={triggerDml}>
                     <c-titled-row key={triggerDml.key} title={triggerDml.title}>
                         <lightning-layout multiple-rows="true" vertical-align="stretch">

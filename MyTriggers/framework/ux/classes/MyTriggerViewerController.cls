@@ -1,4 +1,34 @@
-public class CreateUpdateMetadataUtils implements Metadata.DeployCallback {
+public class MyTriggerViewerController implements Metadata.DeployCallback {
+    /**
+     * Returns list of all triggerHandlerSetting
+     * @return all triggerHandlerSetting
+     */
+    @AuraEnabled
+    public static List<MyTriggerSetting__mdt> getAllTriggerHandlerSettings(){
+        List<MyTriggerSetting__mdt> triggerHandlerSettings;
+
+            triggerHandlerSettings = new List<MyTriggerSetting__mdt>(
+                [SELECT DeveloperName, 
+                        Label,
+                        ClassNamespacePrefix__c, 
+                        Event__c, 
+                        sObject__c,
+                        sObject__r.QualifiedApiName, 
+                        sObjectAPIName__c,
+                        Class__c, 
+                        Order__c,
+                        Description__c,
+                        Active__c,
+                        IsBypassAllowed__c
+                FROM MyTriggerSetting__mdt
+                WHERE Active__c = true
+                ORDER BY Order__c, 
+                         DeveloperName ASC]);
+
+        System.debug(JSON.serialize(triggerHandlerSettings));
+        return triggerHandlerSettings;
+    }
+
     /* Below method recieves the 2 parameters 
        1 - Metadata.DeployResult => Object of MetadataContainer class where this method has been implemented.
        2 - Metadata.DeployCallbackContext => Object of the class where this method has been implemented
@@ -32,10 +62,11 @@ public class CreateUpdateMetadataUtils implements Metadata.DeployCallback {
 			customMetadata.values.add(createField('IsBypassAllowed__c', currentMetadataRecord.IsBypassAllowed__c));
 			customMetadata.values.add(createField('Active__c', currentMetadataRecord.Active__c));
 			customMetadata.values.add(createField('Order__c', currentMetadataRecord.Order__c));
+			customMetadata.values.add(createField('ClassNamespacePrefix__c', currentMetadataRecord.ClassNamespacePrefix__c));
 
 			mdContainer.addMetadata(customMetadata);
 		}
-		CreateUpdateMetadataUtils callback = new CreateUpdateMetadataUtils();
+		MyTriggerViewerController callback = new MyTriggerViewerController();
 		Id jobId = Metadata.Operations.enqueueDeployment(mdContainer, callback);
 		
 		return jobId;
@@ -101,7 +132,7 @@ public class CreateUpdateMetadataUtils implements Metadata.DeployCallback {
 		service.SessionHeader.sessionId = UserInfo.getSessionId();
 		return service;		
 	}
-
+     
 	@AuraEnabled(cacheable=true)
 	public static List<Object> getSobjects(){
 		List<Object> result = new List<Object>();

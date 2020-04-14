@@ -4,17 +4,17 @@
         <lightning-spinner alternative-text="Loading" size="large"></lightning-spinner>
     </template>
 
-    <c-modal-window title="Update Custom Metadata" 
+    <c-modal-window title="Update Custom Metadata"  
                     footer-buttons={modalButtons}
                     width="slds-modal_medium"
-                    onokclick={handleOkClick}>
-        <c-metadata-edit-form record={currentRecord} 
+                    onokclick={handleOkClick} onkeyup={handleKeyPress}>
+        <c-metadata-edit-form record={currentRecord}
                               onmetadatachange={handleMetadataChange}
                               sobject-options={sobjectOptions}>
-
+                              
         </c-metadata-edit-form>
     </c-modal-window>
-    
+
     <lightning-tabset variant="scoped">
 
         <lightning-tab label="Business-centric">

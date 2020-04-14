@@ -1,9 +1,9 @@
 import { LightningElement, track, wire } from 'lwc';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
-import getMDTRowsApex from '@salesforce/apex/MyTriggers.getAllTriggerHandlerSettings';
-import updateMetadata from '@salesforce/apex/CreateUpdateMetadataUtils.updateMdt';
-import checkDeployment from '@salesforce/apex/CreateUpdateMetadataUtils.checkMdt';
-import getAllSObjects from '@salesforce/apex/CreateUpdateMetadataUtils.getSobjects';
+import getMDTRowsApex from '@salesforce/apex/MyTriggerViewerController.getAllTriggerHandlerSettings';
+import updateMetadata from '@salesforce/apex/MyTriggerViewerController.updateMdt';
+import checkDeployment from '@salesforce/apex/MyTriggerViewerController.checkMdt';
+import getAllSObjects from '@salesforce/apex/MyTriggerViewerController.getSobjects';
 
 export default class MyTriggersViewer extends LightningElement {
 
@@ -20,6 +20,24 @@ export default class MyTriggersViewer extends LightningElement {
 	currentDeploymentId;
 
 	isDeploying = false;
+
+    connectedCallback() {
+        let gen = function(comp) {
+            return function(event){
+                if (event.keyCode == 27) {//ESC
+                    comp.modalWindow.close();
+                } else if (event.keyCode == 13) {//ENTER
+                    if (comp.currentRecordChanged) {
+                        comp.handleOkClick(event);
+                    }
+                    comp.modalWindow.close();
+                }
+                
+            }
+        };
+        
+        window.onkeydown = gen(this);
+    }
 
 	get modalWindow() {
 		return this.template.querySelector("c-modal-window");
@@ -76,7 +94,7 @@ export default class MyTriggersViewer extends LightningElement {
 			if (this.currentData.data){
 				for (let index = 0; index < this.currentData.data.length; index++) {
 					let mdtRow = this.currentData.data[index];
-					console.log(mdtRow);
+					//console.log(mdtRow);
 					if (this.changedData.get(mdtRow.Id)) {
 						this.currentData.data[index].isChanged = true;
 					} else {
@@ -109,6 +127,8 @@ export default class MyTriggersViewer extends LightningElement {
 			this._currentRecord = this.mdtById.get(event.detail);
 		}
 		this.modalWindow.show();
+        //setTimeout(() => {
+        //});
 	}
 
 	handleMetadataChange(event) {
@@ -157,6 +177,15 @@ export default class MyTriggersViewer extends LightningElement {
             console.log(error);
         });
 	}
+
+    handleKeyPress({code}) {
+        console.log(code);
+        if ('Escape' === code) {
+            console.log("MyTriggersViewer@handleKeyPress");
+            console.log(event.which);
+        }
+        
+    }
 
 	asyncCheckDeployment() {
 		console.log("asyncCheckDeployment");

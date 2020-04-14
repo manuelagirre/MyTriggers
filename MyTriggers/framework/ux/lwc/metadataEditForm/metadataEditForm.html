@@ -1,9 +1,9 @@
 <template>
 
-    <lightning-layout vertical-align="stretch" multiple-rows="true">
+    <lightning-layout vertical-align="stretch" multiple-rows="true" onkeyup={handleKeyUp}>
 
         <lightning-layout-item size="6">
-            <lightning-input type="text" 
+            <lightning-input type="text"
                              label="Label" 
                              class="slds-m-around_medium"
                              value={record.Label}

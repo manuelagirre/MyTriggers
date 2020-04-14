@@ -102,6 +102,10 @@ export default class MetadataEditForm extends LightningElement {
 		this.dispatchChangeEvent(rec);
 	}
 
+    handleKeyUp({code}) {
+        console.log(code);
+    }
+
 	dispatchChangeEvent(rec) {
 		this.dispatchEvent(
 			new CustomEvent(

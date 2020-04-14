@@ -230,8 +230,10 @@ export default class BusinessCentricView extends MyTriggerViewBase {
     }
 
     createCellElement(mdtRow) {
+        console.log(mdtRow.Description__c + " " + mdtRow.Label);
+        console.log(mdtRow.Description__c == undefined ? mdtRow.Label : mdtRow.Description__c);
         return {
-            "label" : mdtRow.Description__c,
+            "label" : (mdtRow.Description__c == undefined ? mdtRow.Label : mdtRow.Description__c),
             "key" : mdtRow.Id,
 			"id" : mdtRow.Id,
 			"isChanged" : mdtRow.isChanged,

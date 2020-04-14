@@ -1,6 +1,6 @@
 <template>
     <template if:true={isVisible}>
-      <div class={modalClass}>
+      <div class={modalClass}>  
           <div class="slds-modal__container">
               <header class="slds-modal__header">
                   <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" 
@@ -18,11 +18,11 @@
               </div>
               <footer class="slds-modal__footer">
                   <template for:each={footerButtons} for:item='button'>
-                      <button key={button.label} 
-                              class={button.class}
-                              onclick={button.click}>
-                          {button.label}
-                      </button>
+                          <button key={button.label} 
+                                  class={button.class}
+                                  onclick={button.click}>
+                              {button.label}
+                          </button>
                   </template>
               </footer>
           </div>

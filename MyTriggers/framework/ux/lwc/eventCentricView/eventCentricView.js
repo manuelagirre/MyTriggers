@@ -201,7 +201,7 @@ export default class EventCentricView extends MyTriggerViewBase {
         return {
             "key" : mdtRow.Id,
 			"id" : mdtRow.Id,
-            "label" : mdtRow.Description__c,
+            "label" : mdtRow.Description__c == undefined ? mdtRow.Label : mdtRow.Description__c,
 			"isChanged" : mdtRow.isChanged,
             "size" : 2
         };

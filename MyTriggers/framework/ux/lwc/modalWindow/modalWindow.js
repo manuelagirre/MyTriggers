@@ -23,8 +23,10 @@ export default class ModalWindow extends LightningElement {
 	close() {
 		this.isVisible = false;
 	}
-
+    
 	get modalClass(){
 		return "slds-modal slds-fade-in-open " + this.width;
 	}
+
+
 }

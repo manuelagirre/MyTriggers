@@ -256,7 +256,7 @@ export default class SobjectCentricView extends MyTriggerViewBase {
 
     createCellElement(mdtRow) {
         return {
-            "label" : mdtRow.Description__c,
+            "label" : mdtRow.Description__c == undefined ? mdtRow.Label : mdtRow.Description__c,
             "key" : mdtRow.Id,
 			"id" : mdtRow.Id,
 			"isChanged" : mdtRow.isChanged,
